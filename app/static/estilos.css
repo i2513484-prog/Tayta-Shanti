@@ -13,6 +13,7 @@ body {
 /* =========================
    HEADER
 ========================= */
+
 .header {
     background: linear-gradient(90deg, #000000, #111111, #1a1a1a);
     border-bottom: 2px solid #d4af37;
@@ -1118,6 +1119,839 @@ body {
     text-align: right;
 
     text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+/* =========================================
+   CHECKOUT - ESTILOS ADICIONALES
+========================================= */
+
+/* CONTENEDOR PRINCIPAL */
+
+.checkout-grid {
+    width: 90%;
+    max-width: 1250px;
+    margin: 0 auto 60px;
+
+    display: grid;
+    grid-template-columns: 1.6fr 0.9fr;
+    gap: 30px;
+
+    align-items: start;
+}
+
+
+/* COLUMNAS */
+
+.checkout-left,
+.checkout-right {
+    width: 100%;
+}
+
+
+/* TARJETAS */
+
+.card-checkout {
+    background: #151515;
+
+    border: 1px solid rgba(212, 175, 55, 0.18);
+
+    border-radius: 15px;
+
+    padding: 28px;
+
+    margin-bottom: 25px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.30);
+}
+
+
+/* CABECERA DE CADA PASO */
+
+.cabecera-paso {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+
+    padding-bottom: 18px;
+
+    border-bottom:
+        1px solid rgba(212, 175, 55, 0.15);
+}
+
+
+.numero-paso {
+    width: 38px;
+    height: 38px;
+
+    min-width: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #d4af37;
+
+    color: #111;
+
+    font-weight: bold;
+
+    font-size: 18px;
+}
+
+
+/* TÍTULOS DEL CHECKOUT */
+
+.titulo-checkout {
+    text-align: center;
+
+    color: #d4af37;
+
+    margin: 35px 15px 8px;
+
+    font-size: 32px;
+
+    letter-spacing: 1px;
+}
+
+
+.subtitulo-checkout {
+    text-align: center;
+
+    color: #aaa;
+
+    margin-bottom: 35px;
+
+    font-size: 15px;
+}
+
+
+/* TÍTULOS DE SECCIÓN */
+
+.titulo-seccion {
+    color: #ffffff;
+
+    margin: 0 0 5px;
+
+    font-size: 21px;
+}
+
+
+.subtitulo {
+    color: #999;
+
+    margin: 0;
+
+    font-size: 14px;
+}
+
+
+/* GRUPOS DEL FORMULARIO */
+
+.card-checkout .grupo {
+    display: flex;
+
+    flex-direction: column;
+
+    margin-bottom: 20px;
+}
+
+
+.card-checkout label {
+    color: #e5e5e5;
+
+    margin-bottom: 8px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+
+/* INPUTS Y SELECT DEL NUEVO CHECKOUT */
+
+.card-checkout input,
+.card-checkout select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid rgba(212, 175, 55, 0.20);
+
+    background: #0f0f0f;
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    transition: 0.3s ease;
+}
+
+
+.card-checkout input:focus,
+.card-checkout select:focus {
+    outline: none;
+
+    border-color: #d4af37;
+
+    box-shadow:
+        0 0 15px rgba(212, 175, 55, 0.25);
+}
+
+
+.card-checkout input::placeholder {
+    color: #777;
+}
+
+
+.card-checkout select option {
+    background: #151515;
+
+    color: #ffffff;
+}
+
+
+/* FILA DE DOS CAMPOS */
+
+.fila {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+
+/* =========================================
+   MÉTODOS DE PAGO
+========================================= */
+
+.metodos-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 15px;
+}
+
+
+.metodo-card {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 17px;
+
+    border-radius: 14px;
+
+    border:
+        1px solid rgba(212, 175, 55, 0.18);
+
+    background: #101010;
+
+    color: white;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition: 0.25s ease;
+}
+
+
+.metodo-card:hover {
+    transform: translateY(-3px);
+
+    border-color: #d4af37;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.30);
+}
+
+
+.metodo-card.active {
+    border-color: #d4af37;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(212, 175, 55, 0.18),
+            #151515
+        );
+
+    box-shadow:
+        0 0 15px rgba(212, 175, 55, 0.12);
+}
+
+
+.metodo-icono {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #202020;
+
+    font-size: 21px;
+}
+
+
+.metodo-card strong {
+    display: block;
+
+    color: white;
+
+    margin-bottom: 4px;
+}
+
+
+.metodo-card small {
+    display: block;
+
+    color: #999;
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   MOSTRAR Y OCULTAR MÉTODOS
+========================================= */
+
+.contenido-metodo {
+    display: none;
+}
+
+
+.contenido-metodo.activo {
+    display: block;
+
+    animation:
+        aparecerMetodo 0.3s ease;
+}
+
+
+@keyframes aparecerMetodo {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================
+   CAJAS DE PAGO
+========================================= */
+
+.pago-box {
+    background: #101010;
+
+    border:
+        1px solid rgba(212, 175, 55, 0.15);
+
+    border-radius: 14px;
+
+    padding: 25px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 25px;
+}
+
+
+.pago-info {
+    flex: 1;
+}
+
+
+.pago-info h3,
+.pago-box h3 {
+    color: #d4af37;
+
+    margin-top: 0;
+}
+
+
+.pago-info p,
+.pago-box p {
+    color: #bbb;
+
+    line-height: 1.6;
+}
+
+
+/* NÚMERO YAPE */
+
+.numero-yape {
+    display: inline-block;
+
+    margin: 15px 0;
+
+    padding: 12px 20px;
+
+    border-radius: 10px;
+
+    background: #1b1b1b;
+
+    border:
+        1px solid rgba(212, 175, 55, 0.25);
+
+    color: #d4af37;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+}
+
+
+/* NOTA DEL PAGO */
+
+.nota-pago {
+    color: #e0c46b !important;
+
+    font-size: 13px;
+}
+
+
+/* QR */
+
+.pago-qr {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+
+.qr {
+    width: 180px;
+
+    max-width: 100%;
+
+    background: white;
+
+    padding: 10px;
+
+    border-radius: 12px;
+}
+
+
+/* =========================================
+   CUENTAS BANCARIAS
+========================================= */
+
+.pago-box-banco {
+    flex-direction: column;
+
+    align-items: stretch;
+}
+
+
+.cuenta-box {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    background: #181818;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.cuenta-box strong {
+    color: #d4af37;
+}
+
+
+.cuenta-box span {
+    color: #ddd;
+
+    word-break: break-word;
+}
+
+
+/* =========================================
+   ARCHIVOS
+========================================= */
+
+.grupo-archivo {
+    margin-top: 20px;
+}
+
+
+.grupo-archivo input[type="file"] {
+    cursor: pointer;
+
+    padding: 12px;
+}
+
+
+/* =========================================
+   MERCADO PAGO
+========================================= */
+
+.pago-mercado {
+    justify-content: flex-start;
+}
+
+
+.mercado-icono {
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(212, 175, 55, 0.12);
+
+    font-size: 28px;
+}
+
+
+.btn-mercado,
+.btn-pagar {
+    width: 100%;
+
+    padding: 16px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #d4af37;
+
+    color: #111;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+
+.btn-mercado {
+    margin-top: 20px;
+}
+
+
+.btn-mercado:hover,
+.btn-pagar:hover {
+    background: #e7c85b;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(212, 175, 55, 0.20);
+}
+
+
+.confirmacion-final {
+    margin-top: 25px;
+
+    text-align: center;
+}
+
+
+.confirmacion-final p {
+    color: #aaa;
+
+    font-size: 13px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================
+   RESUMEN DEL PEDIDO
+========================================= */
+
+.resumen-sticky {
+    position: sticky;
+
+    top: 25px;
+
+    background: #151515;
+
+    border:
+        1px solid rgba(212, 175, 55, 0.18);
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.30);
+}
+
+
+.resumen-sticky h2 {
+    color: #d4af37;
+
+    margin-top: 0;
+}
+
+
+.producto-resumen {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px 0;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.producto-resumen img {
+    width: 60px;
+    height: 60px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+}
+
+
+.producto-info {
+    flex: 1;
+}
+
+
+.producto-info h3 {
+    margin: 0 0 5px;
+
+    color: white;
+
+    font-size: 14px;
+}
+
+
+.producto-info p {
+    margin: 0;
+
+    color: #999;
+
+    font-size: 13px;
+}
+
+
+.producto-resumen strong {
+    color: #d4af37;
+
+    white-space: nowrap;
+}
+
+
+/* LÍNEAS DE TOTALES */
+
+.resumen-sticky hr {
+    border: none;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    margin: 20px 0;
+}
+
+
+.linea {
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 10px 0;
+
+    color: #ccc;
+}
+
+
+.total {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.total span {
+    color: #aaa;
+
+    font-weight: bold;
+}
+
+
+.total h1 {
+    margin: 0;
+
+    color: #d4af37;
+
+    font-size: 28px;
+}
+
+
+.seguridad-pago {
+    margin-top: 20px;
+
+    text-align: center;
+
+    color: #999;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   ALERTAS
+========================================= */
+
+.alerta-error {
+    width: 90%;
+
+    max-width: 1000px;
+
+    margin: 20px auto;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(190, 50, 50, 0.15);
+
+    border:
+        1px solid rgba(255, 80, 80, 0.35);
+
+    color: #ffb0b0;
+
+    text-align: center;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 950px) {
+
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-right {
+        order: -1;
+    }
+
+    .resumen-sticky {
+        position: static;
+    }
+
+    .metodos-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .checkout-grid {
+        width: 94%;
+
+        gap: 20px;
+    }
+
+    .titulo-checkout {
+        font-size: 25px;
+    }
+
+    .card-checkout {
+        padding: 20px;
+    }
+
+    .fila {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .pago-box {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .pago-qr {
+        margin: 0 auto;
+    }
+
+    .qr {
+        width: 160px;
+    }
+
+    .cuenta-box {
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
 }
 
 /* =========================

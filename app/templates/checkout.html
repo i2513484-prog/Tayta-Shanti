@@ -2,606 +2,846 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
-    content="width=device-width, initial-scale=1.0">
+          content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Checkout
-    </title>
+    <title>Finalizar compra | Licorería Tayta Shanti</title>
 
     <link rel="stylesheet"
-    href="{{ url_for('static',
-    filename='estilos.css') }}">
-
+          href="{{ url_for('static', filename='estilos.css') }}">
 </head>
 
 <body>
 
-<!-- HEADER -->
+    <!-- ================= HEADER ================= -->
 
-<div class="header">
+    <div class="header">
 
-    <div class="header-left">
+        <div class="header-left">
+            💳 Comprobante de Pago
+        </div>
 
-        💳Comprobante de Pago
+        <div class="header-center">
+            🍃 LICORERÍA TAYTA SHANTI 🍃
+        </div>
 
-    </div>
-
-    <div class="header-center">
-
-        🍃 LICORERÍA TAYTA SHANTI 🍃
-
-    </div>
-
-    <div class="header-right">
-
-        <a href="{{ url_for('main.carrito') }}"
-        class="icono-carrito">
-
-            🛒Volver al carrito
-
-        </a>
+        <div class="header-right">
+            <a href="{{ url_for('main.carrito') }}"
+               class="icono-carrito">
+                🛒 Volver al carrito
+            </a>
+        </div>
 
     </div>
 
-</div>
 
-<!-- ALERTAS -->
+    <!-- ================= ALERTAS ================= -->
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alerta-error">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-<div class="alerta-error">
 
-    {{ messages[0] }}
+    <!-- ================= TÍTULO ================= -->
 
-</div>
+    <h1 class="titulo-checkout">
+        FINALIZAR COMPRA
+    </h1>
 
-{% endif %}
-{% endwith %}
+    <p class="subtitulo-checkout">
+        Completa tus datos, selecciona tu método de pago
+        y confirma tu pedido.
+    </p>
 
-<!-- TITULO -->
 
-<h1 class="titulo-checkout">
+    <!-- ================= GRID PRINCIPAL ================= -->
 
-    FINALIZAR COMPRA
+    <section class="checkout-grid">
 
-</h1>
 
-<!-- GRID -->
+        <!-- ================= IZQUIERDA ================= -->
 
-<section class="checkout-grid">
-
-    <!-- IZQUIERDA -->
-
-    <div class="checkout-left">
-
-        <!-- COMPROBANTE -->
-
-        <div class="card">
-
-            <h2 class="titulo-seccion">
-
-                🧾 Datos de comprobante
-
-            </h2>
-
-            <p class="subtitulo">
-
-                Selecciona el tipo de comprobante
-
-            </p>
+        <div class="checkout-left">
 
             <form action="{{ url_for('main.procesar_compra') }}"
-            method="POST"> 
-            <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-                >
+                  method="POST"
+                  enctype="multipart/form-data"
+                  id="form-checkout">
 
-                <!-- TIPO -->
+                {% if csrf_token is defined %}
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+                {% endif %}
 
-                <div class="grupo">
 
-                    <label>
+                <!-- MÉTODO DE PAGO -->
 
-                        Tipo de comprobante
+                <input type="hidden"
+                       name="metodo_pago"
+                       id="metodo_pago"
+                       value="yape">
 
-                    </label>
 
-                    <select name="tipo_doc"
-                    id="tipo_doc">
+                <!-- ================= DATOS DEL CLIENTE ================= -->
 
-                        <option value="dni">
+                <div class="card card-checkout">
 
-                            Boleta - DNI
+                    <div class="cabecera-paso">
 
-                        </option>
+                        <div class="numero-paso">
+                            1
+                        </div>
 
-                        <option value="ruc">
+                        <div>
 
-                            Factura - RUC
+                            <h2 class="titulo-seccion">
+                                👤 Datos del cliente
+                            </h2>
 
-                        </option>
+                            <p class="subtitulo">
+                                Ingresa los datos para tu comprobante de pago.
+                            </p>
 
-                    </select>
+                        </div>
 
-                </div>
-
-                <!-- FILA -->
-
-                <div class="fila">
-
-                    <!-- DOCUMENTO -->
-                
-                    <div class="grupo">
-                
-                        <label id="label_doc">
-                
-                            Número DNI
-                
-                        </label>
-                
-                        <input type="text"
-                        name="numero_doc"
-                        id="numero_doc"
-                        placeholder="Ingrese DNI"
-                        required>
-                
                     </div>
-                
-                    <!-- NOMBRE -->
-                
+
+
+                    <!-- TIPO DE COMPROBANTE -->
+
                     <div class="grupo">
-                
-                        <label id="label_nombre">
-                
-                            Nombre completo
-                
+
+                        <label for="tipo_doc">
+                            Tipo de comprobante
                         </label>
-                
-                        <input type="text"
-                        name="nombre"
-                        id="nombre"
-                        placeholder="Nombre automático">
-                
-                        <input type="hidden"
-                        name="nombre_completo"
-                        id="nombre_completo">
-                
+
+                        <select name="tipo_doc"
+                                id="tipo_doc"
+                                required>
+
+                            <option value="dni">
+                                Boleta - DNI
+                            </option>
+
+                            <option value="ruc">
+                                Factura - RUC
+                            </option>
+
+                        </select>
+
                     </div>
-                
+
+
+                    <!-- DOCUMENTO Y NOMBRE -->
+
+                    <div class="fila">
+
+                        <div class="grupo">
+
+                            <label id="label_doc"
+                                   for="numero_doc">
+                                Número DNI
+                            </label>
+
+                            <input type="text"
+                                   name="numero_doc"
+                                   id="numero_doc"
+                                   placeholder="Ingrese DNI"
+                                   inputmode="numeric"
+                                   pattern="[0-9]*"
+                                   maxlength="8"
+                                   required>
+
+                        </div>
+
+
+                        <div class="grupo">
+
+                            <label id="label_nombre"
+                                   for="nombre">
+                                Nombre completo
+                            </label>
+
+                            <input type="text"
+                                   name="nombre"
+                                   id="nombre"
+                                   placeholder="Nombre completo"
+                                   required>
+
+                            <input type="hidden"
+                                   name="nombre_completo"
+                                   id="nombre_completo">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TELÉFONO -->
+
+                    <div class="grupo">
+
+                        <label for="telefono">
+                            Teléfono
+                        </label>
+
+                        <input type="tel"
+                               name="telefono"
+                               id="telefono"
+                               placeholder="Ingrese teléfono"
+                               inputmode="numeric"
+                               pattern="[0-9+\s()-]*"
+                               required>
+
+                    </div>
+
                 </div>
 
-                <!-- TELEFONO -->
 
-                <div class="grupo">
+                <!-- ================= MÉTODO DE PAGO ================= -->
 
-                    <label>
+                <div class="card card-checkout card-metodo">
 
-                        Teléfono
+                    <div class="cabecera-paso">
 
-                    </label>
+                        <div class="numero-paso">
+                            2
+                        </div>
 
-                    <input type="text"
-                    name="telefono"
-                    placeholder="Ingrese teléfono">
+                        <div>
 
-                </div>
+                            <h2 class="titulo-seccion">
+                                💳 Método de pago
+                            </h2>
 
-                <!-- METODOS -->
+                            <p class="subtitulo">
+                                Selecciona cómo deseas realizar el pago.
+                            </p>
 
-                <div class="card-metodo">
+                        </div>
 
-                    <h2 class="titulo-seccion">
+                    </div>
 
-                        💳 Método de pago
-
-                    </h2>
 
                     <div class="metodos-grid">
 
+
                         <!-- YAPE -->
-                    
-                        <div class="metodo-card active"
-                        onclick="mostrarMetodo('yape', this)">
-                    
-                            <h3>
-                                📱 Yape
-                            </h3>
-                    
-                        </div>
-                    
+
+                        <button type="button"
+                                class="metodo-card active"
+                                onclick="mostrarMetodo('yape', this)">
+
+                            <span class="metodo-icono">
+                                📱
+                            </span>
+
+                            <span>
+                                <strong>Yape</strong>
+                                <small>Pago por QR o número</small>
+                            </span>
+
+                        </button>
+
+
                         <!-- TRANSFERENCIA -->
-                    
-                        <div class="metodo-card"
-                        onclick="mostrarMetodo('transferencia', this)">
-                    
-                            <h3>
-                                🏦 Transferencia
-                            </h3>
-                    
-                        </div>
-                    
+
+                        <button type="button"
+                                class="metodo-card"
+                                onclick="mostrarMetodo('transferencia', this)">
+
+                            <span class="metodo-icono">
+                                🏦
+                            </span>
+
+                            <span>
+                                <strong>Transferencia</strong>
+                                <small>Pago por banco</small>
+                            </span>
+
+                        </button>
+
+
                         <!-- MERCADO PAGO -->
-                    
-                        <div class="metodo-card"
-                        onclick="mostrarMetodo('mercado', this)">
-                    
-                            <h3>
-                                💳 Mercado Pago
-                            </h3>
-                    
-                        </div>
-                    
-                    </div>
-                    
-                    <!-- YAPE -->
-                    
-                    <div id="yape"
-                    class="contenido-metodo activo">
-                    
-                        <div class="pago-box">
-                    
-                            <h3>
-                                Número Yape
-                            </h3>
-                    
-                            <div class="numero-yape">
-                    
-                                904 434 996
-                    
-                            </div>
-                    
-                            <img src="{{ url_for('static',
-                            filename='img/qr-yape.png') }}"
-                            class="qr">
-                    
-                            <label>
-                                Subir captura
-                            </label>
-                    
-                            <input type="file"
-                            name="captura_yape">
-                    
-                        </div>
-                    
-                    </div>
-                    
-                    <!-- TRANSFERENCIA -->
-                    
-                    <div id="transferencia"
-                    class="contenido-metodo">
-                    
-                        <div class="pago-box">
-                    
-                            <h3>
-                                Banco BCP
-                            </h3>
-                    
-                            <div class="cuenta-box">
-                    
-                                <strong>
-                                    Cuenta:
-                                </strong>
-                    
-                                <span>
-                                    191982-86318-007
-                                </span>
-                    
-                            </div>
-                    
-                            <div class="cuenta-box">
-                    
-                                <strong>
-                                    CCI:
-                                </strong>
-                    
-                                <span>
-                                    00219-119828-63180-0759
-                                </span>
-                    
-                            </div>
-                    
-                            <label>
-                                Subir voucher
-                            </label>
-                    
-                            <input type="file"
-                            name="voucher_transferencia">
-                    
-                        </div>
-                    
-                    </div>
-                    
-                    <!-- MERCADO PAGO -->
-                    
-                    <div id="mercado"
-                    class="contenido-metodo">
-                    
-                        <div class="pago-box">
-                    
-                            <h3>
-                                Pagar con tarjeta
-                            </h3>
-                    
-                            <p>
-                                Visa / Mastercard
-                            </p>
-                    
-                            <button type="submit"
-                            formaction="{{ url_for('main.crear_pago') }}"
-                            class="btn-mercado">
-                    
-                                Pagar con Mercado Pago
-                    
-                            </button>
-                    
-                        </div>
-                    
+
+                        <button type="button"
+                                class="metodo-card"
+                                onclick="mostrarMetodo('mercado', this)">
+
+                            <span class="metodo-icono">
+                                💳
+                            </span>
+
+                            <span>
+                                <strong>Mercado Pago</strong>
+                                <small>Tarjeta y pago seguro</small>
+                            </span>
+
+                        </button>
+
                     </div>
 
                 </div>
 
-                <!-- BOTON -->
 
-                <button type="submit"
-                class="btn-pagar">
+                <!-- ================= DETALLES DEL PAGO ================= -->
 
-                    🔒 Confirmar pedido
+                <div class="card card-checkout">
 
-                </button>
+                    <div class="cabecera-paso">
+
+                        <div class="numero-paso">
+                            3
+                        </div>
+
+                        <div>
+
+                            <h2 class="titulo-seccion">
+                                💳 Detalles del pago
+                            </h2>
+
+                            <p class="subtitulo">
+                                Sigue las indicaciones del método seleccionado.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= YAPE ================= -->
+
+                    <div id="yape"
+                         class="contenido-metodo activo">
+
+                        <div class="pago-box">
+
+                            <div class="pago-info">
+
+                                <h3>
+                                    📱 Pago con Yape
+                                </h3>
+
+                                <p>
+                                    Escanea el código QR o realiza
+                                    el pago al siguiente número.
+                                </p>
+
+                                <div class="numero-yape">
+                                    904 434 996
+                                </div>
+
+                                <p class="nota-pago">
+                                    ⚠️ Verifica que el monto pagado
+                                    coincida con el total de tu pedido.
+                                </p>
+
+                            </div>
+
+
+                            <div class="pago-qr">
+
+                                <img src="{{ url_for('static', filename='img/qr-yape.png') }}"
+                                     class="qr"
+                                     alt="Código QR de Yape">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="grupo grupo-archivo">
+
+                            <label for="captura_yape">
+                                📎 Subir comprobante de Yape
+                            </label>
+
+                            <input type="file"
+                                   name="captura_yape"
+                                   id="captura_yape"
+                                   accept="image/*,.pdf">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= TRANSFERENCIA ================= -->
+
+                    <div id="transferencia"
+                         class="contenido-metodo">
+
+                        <div class="pago-box pago-box-banco">
+
+                            <div>
+
+                                <h3>
+                                    🏦 Transferencia bancaria
+                                </h3>
+
+                                <p>
+                                    Realiza la transferencia utilizando
+                                    los siguientes datos.
+                                </p>
+
+                            </div>
+
+
+                            <div class="cuenta-box">
+
+                                <strong>Banco</strong>
+
+                                <span>
+                                    BCP
+                                </span>
+
+                            </div>
+
+
+                            <div class="cuenta-box">
+
+                                <strong>Cuenta</strong>
+
+                                <span>
+                                    191982-86318-007
+                                </span>
+
+                            </div>
+
+
+                            <div class="cuenta-box">
+
+                                <strong>CCI</strong>
+
+                                <span>
+                                    00219-119828-63180-0759
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="grupo grupo-archivo">
+
+                            <label for="voucher_transferencia">
+                                📎 Subir voucher de transferencia
+                            </label>
+
+                            <input type="file"
+                                   name="voucher_transferencia"
+                                   id="voucher_transferencia"
+                                   accept="image/*,.pdf">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= MERCADO PAGO ================= -->
+
+                    <div id="mercado"
+                         class="contenido-metodo">
+
+                        <div class="pago-box pago-mercado">
+
+                            <div class="mercado-icono">
+                                💳
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    Pago seguro con Mercado Pago
+                                </h3>
+
+                                <p>
+                                    Podrás continuar a una plataforma
+                                    segura para pagar con tarjeta.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <button type="submit"
+                                formaction="{{ url_for('main.crear_pago') }}"
+                                class="btn-mercado">
+
+                            💳 Continuar a Mercado Pago
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= CONFIRMACIÓN ================= -->
+
+                <div class="confirmacion-final">
+
+                    <p>
+                        🔒 Revisa tus datos antes de confirmar tu pedido.
+                    </p>
+
+                    <button type="submit"
+                            class="btn-pagar">
+
+                        🔒 CONFIRMAR PEDIDO
+
+                    </button>
+
+                </div>
 
             </form>
 
         </div>
 
-    </div>
 
-    <!-- DERECHA -->
+        <!-- ================= DERECHA ================= -->
 
-    <div class="checkout-right">
+        <aside class="checkout-right">
 
-        <h2>
+            <div class="resumen-sticky">
 
-            🛍 Resumen del pedido
+                <h2>
+                    🛍 Resumen del pedido
+                </h2>
 
-        </h2>
-
-        {% for item in productos %}
-
-        <div class="producto-resumen">
-
-            <img src="{{ url_for('static',
-            filename=item.producto.imagen) }}">
-
-            <div>
-
-                <h3>
-
-                    {{ item.producto.nombre }}
-
-                </h3>
-
-                <p>
-
-                    Cantidad: {{ item.cantidad }}
-
+                <p class="subtitulo">
+                    Revisa los productos antes de realizar el pago.
                 </p>
+
+
+                <!-- PRODUCTOS -->
+
+                {% for item in productos %}
+
+                <div class="producto-resumen">
+
+                    <img src="{{ url_for('static', filename=item.producto.imagen) }}"
+                         alt="{{ item.producto.nombre }}">
+
+                    <div class="producto-info">
+
+                        <h3>
+                            {{ item.producto.nombre }}
+                        </h3>
+
+                        <p>
+                            Cantidad: {{ item.cantidad }}
+                        </p>
+
+                    </div>
+
+                    <strong>
+                        S/ {{ "%.2f"|format(item.subtotal) }}
+                    </strong>
+
+                </div>
+
+                {% endfor %}
+
+
+                <hr>
+
+
+                <!-- SUBTOTAL -->
+
+                <div class="linea">
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong>
+                        S/ {{ "%.2f"|format(subtotal) }}
+                    </strong>
+
+                </div>
+
+
+                <!-- ENTREGA -->
+
+                <div class="linea">
+
+                    <span>
+
+                        {% if tipo_entrega == 'delivery' %}
+                            🚚 Delivery
+                        {% else %}
+                            🏪 Recojo en tienda
+                        {% endif %}
+
+                    </span>
+
+                    <strong>
+
+                        {% if costo_delivery > 0 %}
+                            S/ {{ "%.2f"|format(costo_delivery) }}
+                        {% else %}
+                            GRATIS
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <hr>
+
+
+                <!-- TOTAL FINAL -->
+
+                <div class="total">
+
+                    <span>
+                        TOTAL
+                    </span>
+
+                    <h1>
+                        S/ {{ "%.2f"|format(total_final) }}
+                    </h1>
+
+                </div>
+
+
+                <div class="seguridad-pago">
+                    🔒 Compra segura
+                </div>
 
             </div>
 
-            <strong>
+        </aside>
 
-                S/ {{ item.subtotal }}
+    </section>
 
-            </strong>
 
-        </div>
+    <!-- ================= JAVASCRIPT ================= -->
 
-        {% endfor %}
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 
-        <hr>
 
-        <div class="linea">
+    <script>
 
-            <span>
+        /*
+        =====================================
+        MÉTODOS DE PAGO
+        =====================================
+        */
 
-                Subtotal
+        function mostrarMetodo(id, elemento) {
 
-            </span>
+            document.querySelectorAll('.contenido-metodo')
+                .forEach(function(div) {
+                    div.classList.remove('activo');
+                });
 
-            <strong>
+            const contenido = document.getElementById(id);
 
-                S/ {{ total }}
+            if (contenido) {
+                contenido.classList.add('activo');
+            }
 
-            </strong>
+            document.querySelectorAll('.metodo-card')
+                .forEach(function(card) {
+                    card.classList.remove('active');
+                });
 
-        </div>
+            elemento.classList.add('active');
 
-        <div class="linea">
+            document.getElementById('metodo_pago').value = id;
 
-            <span>
+        }
 
-                Envío
 
-            </span>
+        /*
+        =====================================
+        DNI / RUC
+        =====================================
+        */
 
-            <strong class="gratis">
+        const tipoDoc = document.getElementById("tipo_doc");
+        const numeroDoc = document.getElementById("numero_doc");
+        const labelDoc = document.getElementById("label_doc");
+        const labelNombre = document.getElementById("label_nombre");
+        const inputNombre = document.getElementById("nombre");
 
-                Gratis
 
-            </strong>
+        tipoDoc.addEventListener("change", function() {
 
-        </div>
+            numeroDoc.value = "";
+            inputNombre.value = "";
 
-        <hr>
+            if (this.value === "dni") {
 
-        <div class="total">
+                labelDoc.innerText = "Número DNI";
+                labelNombre.innerText = "Nombre completo";
 
-            <span>
+                numeroDoc.placeholder = "Ingrese DNI";
+                inputNombre.placeholder = "Nombre completo";
 
-                TOTAL
+                numeroDoc.maxLength = 8;
+                numeroDoc.setAttribute("minlength", "8");
 
-            </span>
+            } else {
 
-            <h1>
+                labelDoc.innerText = "Número RUC";
+                labelNombre.innerText = "Razón social";
 
-                S/ {{ total }}
+                numeroDoc.placeholder = "Ingrese RUC";
+                inputNombre.placeholder = "Razón social";
 
-            </h1>
+                numeroDoc.maxLength = 11;
+                numeroDoc.setAttribute("minlength", "11");
 
-        </div>
+            }
 
-    </div>
+        });
 
-</section>
 
-<script src="{{ url_for('static',
-filename='app.js') }}"></script>
+        /*
+        =====================================
+        VALIDACIÓN DEL FORMULARIO
+        =====================================
+        */
+
+        const formulario =
+            document.getElementById("form-checkout");
+
+
+        formulario.addEventListener("submit", function(e) {
+
+            const tipo = tipoDoc.value;
+
+            const numero =
+                numeroDoc.value.trim();
+
+            const nombre =
+                inputNombre.value.trim();
+
+            const metodoPago =
+                document.getElementById("metodo_pago").value;
+
+
+            /* VALIDAR DNI */
+
+            if (tipo === "dni") {
+
+                if (!/^\d{8}$/.test(numero)) {
+
+                    alert(
+                        "El DNI debe contener exactamente 8 dígitos."
+                    );
+
+                    e.preventDefault();
+
+                    return;
+
+                }
+
+            }
+
+
+            /* VALIDAR RUC */
+
+            if (tipo === "ruc") {
+
+                if (!/^\d{11}$/.test(numero)) {
+
+                    alert(
+                        "El RUC debe contener exactamente 11 dígitos."
+                    );
+
+                    e.preventDefault();
+
+                    return;
+
+                }
+
+            }
+
+
+            /* VALIDAR NOMBRE */
+
+            if (nombre.length < 3) {
+
+                alert(
+                    "Ingresa un nombre o razón social válido."
+                );
+
+                e.preventDefault();
+
+                return;
+
+            }
+
+
+            /* VALIDAR COMPROBANTE SEGÚN MÉTODO */
+
+            if (metodoPago === "yape") {
+
+                const archivoYape =
+                    document.getElementById("captura_yape");
+
+                if (!archivoYape.files.length) {
+
+                    alert(
+                        "Debes subir el comprobante de pago de Yape."
+                    );
+
+                    e.preventDefault();
+
+                    return;
+
+                }
+
+            }
+
+
+            if (metodoPago === "transferencia") {
+
+                const archivoTransferencia =
+                    document.getElementById(
+                        "voucher_transferencia"
+                    );
+
+                if (!archivoTransferencia.files.length) {
+
+                    alert(
+                        "Debes subir el voucher de transferencia."
+                    );
+
+                    e.preventDefault();
+
+                    return;
+
+                }
+
+            }
+
+
+            /*
+            GUARDAR NOMBRE COMPLETO
+            */
+
+            document.getElementById(
+                "nombre_completo"
+            ).value = nombre;
+
+        });
+
+    </script>
 
 </body>
-
-<script>
-
-    function mostrarMetodo(id, elemento){
-    
-        document.querySelectorAll('.contenido-metodo')
-        .forEach(div => {
-    
-            div.classList.remove('activo');
-    
-        });
-    
-        document.getElementById(id)
-        .classList.add('activo');
-    
-        document.querySelectorAll('.metodo-card')
-        .forEach(card => {
-    
-            card.classList.remove('active');
-    
-        });
-    
-        elemento.classList.add('active');
-    }
-    
-    /* ===== DNI / RUC ===== */
-    
-    const tipoDoc =
-    document.getElementById("tipo_doc");
-    
-    const numeroDoc =
-    document.getElementById("numero_doc");
-    
-    const labelDoc =
-    document.getElementById("label_doc");
-    
-    const labelNombre =
-    document.getElementById("label_nombre");
-    
-    const inputNombre =
-    document.getElementById("nombre");
-    
-    tipoDoc.addEventListener("change", function(){
-    
-        if(this.value == "dni"){
-    
-            labelDoc.innerText =
-            "Número DNI";
-    
-            labelNombre.innerText =
-            "Nombre completo";
-    
-            numeroDoc.placeholder =
-            "Ingrese DNI";
-    
-            inputNombre.placeholder =
-            "Nombre completo";
-    
-            numeroDoc.maxLength = 8;
-    
-            numeroDoc.value = "";
-    
-            inputNombre.value = "";
-        }
-    
-        else{
-    
-            labelDoc.innerText =
-            "Número RUC";
-    
-            labelNombre.innerText =
-            "Razón social";
-    
-            numeroDoc.placeholder =
-            "Ingrese RUC";
-    
-            inputNombre.placeholder =
-            "Razón social";
-    
-            numeroDoc.maxLength = 11;
-    
-            numeroDoc.value = "";
-    
-            inputNombre.value = "";
-        }
-    
-    });
-    
-    </script>
-
-<script>
-
-    const formulario =
-    document.querySelector("form");
-    
-    formulario.addEventListener("submit", function(e){
-    
-        const tipo =
-        tipoDoc.value;
-    
-        const numero =
-        numeroDoc.value.trim();
-    
-        // DNI
-    
-        if(tipo == "dni"){
-    
-            if(numero.length != 8){
-    
-                alert(
-                    "El DNI debe tener 8 dígitos"
-                );
-    
-                e.preventDefault();
-    
-                return;
-            }
-        }
-    
-        // RUC
-    
-        if(tipo == "ruc"){
-    
-            if(numero.length != 11){
-    
-                alert(
-                    "El RUC debe tener 11 dígitos"
-                );
-    
-                e.preventDefault();
-    
-                return;
-            }
-        }
-    
-    });
-    
-    </script>
 
 </html>
