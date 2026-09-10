@@ -1,27 +1,27 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta name="viewport"
+```
+<meta name="viewport"
     content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Envíos
-    </title>
+<title>Envíos | Licorería Tayta Shanti</title>
 
-    <link rel="stylesheet"
+<link rel="stylesheet"
     href="{{ url_for('static',
     filename='estilos.css') }}">
+```
 
 </head>
 
 <body>
 
+```
 <!-- NAVBAR -->
-
 <nav class="navbar">
 
     <a href="{{ url_for('main.carrito') }}">
@@ -38,152 +38,434 @@
 
 </nav>
 
+
 <!-- CONTENIDO -->
-
 <section class="contenedor-carrito">
-
-    <!-- PANEL -->
 
     <div class="panel-envio">
 
+
+        <!-- TÍTULO -->
         <h1 class="titulo-carrito">
-            🚚 Datos de envío
+            🚚 Entrega de tu pedido
         </h1>
 
         <p class="subtitulo-carrito">
-            Ingresa tu dirección para continuar la compra
+            Selecciona cómo deseas recibir tu compra
         </p>
 
-        <form method="POST">
+
+        <!-- FORMULARIO -->
+        <form method="POST"
+            id="form-envio">
+
             <input
                 type="hidden"
                 name="csrf_token"
                 value="{{ csrf_token() }}"
+            >
+
+
+            <!-- TIPO ENTREGA -->
+            <input
+                type="hidden"
+                name="tipo_entrega"
+                id="tipo_entrega"
+                value="delivery"
+            >
+
+
+            <!-- OPCIONES -->
+            <div class="opciones-entrega">
+
+
+                <!-- DELIVERY -->
+                <div class="opcion-entrega activa"
+                    id="opcion-delivery">
+
+                    <div class="icono-entrega">
+                        🚚
+                    </div>
+
+                    <h2>
+                        Delivery
+                    </h2>
+
+                    <p>
+                        Recibe tu pedido en la dirección
+                        que indiques dentro de nuestra
+                        zona de cobertura.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn-seleccionar"
+                        onclick="seleccionarDelivery()">
+
+                        Seleccionar Delivery
+
+                    </button>
+
+                </div>
+
+
+                <!-- RECOJO -->
+                <div class="opcion-entrega"
+                    id="opcion-recojo">
+
+                    <div class="icono-entrega">
+                        🏪
+                    </div>
+
+                    <h2>
+                        Recojo en tienda
+                    </h2>
+
+                    <p>
+                        Realiza tu pedido y recógelo
+                        directamente en Licorería
+                        Tayta Shanti.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn-seleccionar"
+                        onclick="seleccionarRecojo()">
+
+                        Seleccionar Recojo
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- DELIVERY -->
+            <div id="seccion-delivery">
+
+                <h2 class="subtitulo-seccion">
+                    📍 Dirección de entrega
+                </h2>
+
+
+                <!-- CAMPOS OCULTOS PARA BACKEND -->
+                <input
+                    type="hidden"
+                    name="departamento"
+                    value="Junín"
                 >
 
-            <div class="fila">
-
-                <div class="grupo">
-
-                    <label>
-                        Departamento
-                    </label>
-
-                    <input type="text"
-                    value="Junín"
-                    readonly>
-
-                </div>
-
-                <div class="grupo">
-
-                    <label>
-                        Provincia
-                    </label>
-
-                    <input type="text"
+                <input
+                    type="hidden"
+                    name="provincia"
                     value="Huancayo"
-                    readonly>
+                >
+
+
+                <!-- DEPARTAMENTO Y PROVINCIA -->
+                <div class="fila">
+
+
+                    <div class="grupo">
+
+                        <label>
+                            Departamento
+                        </label>
+
+                        <input
+                            type="text"
+                            value="Junín"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div class="grupo">
+
+                        <label>
+                            Provincia
+                        </label>
+
+                        <input
+                            type="text"
+                            value="Huancayo"
+                            readonly
+                        >
+
+                    </div>
 
                 </div>
 
-            </div>
 
-            <div class="grupo">
-
-                <label>
-                    Distrito
-                </label>
-
-                <select name="distrito" required>
-
-                    <option value="">
-                        Seleccionar
-                    </option>
-
-                    <option value="Huancayo">
-                        Huancayo
-                    </option>
-
-                    <option value="El Tambo">
-                        El Tambo
-                    </option>
-
-                    <option value="Chilca">
-                        Chilca
-                    </option>
-
-                    <option value="Pilcomayo">
-                        Pilcomayo
-                    </option>
-
-                </select>
-
-            </div>
-
-            <div class="grupo">
-
-                <label>
-                    Dirección
-                </label>
-
-                <input type="text"
-                name="direccion"
-                placeholder="Av / Calle / Jr"
-                required>
-
-            </div>
-
-            <div class="fila">
-
+                <!-- DISTRITO -->
                 <div class="grupo">
 
                     <label>
-                        Número
+                        Distrito
                     </label>
 
-                    <input type="text"
-                    name="numero">
+                    <select
+                        name="distrito"
+                        id="distrito"
+                        required
+                    >
+
+                        <option value="">
+                            Selecciona tu distrito
+                        </option>
+
+                        <option value="Huancayo">
+                            Huancayo
+                        </option>
+
+                        <option value="El Tambo">
+                            El Tambo
+                        </option>
+
+                        <option value="Chilca">
+                            Chilca
+                        </option>
+
+                        <option value="Pilcomayo">
+                            Pilcomayo
+                        </option>
+
+                        <option value="San Agustín de Cajas">
+                            San Agustín de Cajas
+                        </option>
+
+                        <option value="Huancán">
+                            Huancán
+                        </option>
+
+                    </select>
 
                 </div>
 
+
+                <!-- DIRECCIÓN -->
                 <div class="grupo">
 
                     <label>
-                        Piso / Dpto
+                        Dirección
                     </label>
 
-                    <input type="text"
-                    name="piso">
+                    <input
+                        type="text"
+                        name="direccion"
+                        id="direccion"
+                        placeholder="Av. / Calle / Jr."
+                        required
+                    >
+
+                </div>
+
+
+                <!-- NÚMERO Y PISO -->
+                <div class="fila">
+
+
+                    <div class="grupo">
+
+                        <label>
+                            Número
+                        </label>
+
+                        <input
+                            type="text"
+                            name="numero"
+                            placeholder="Ejemplo: 123"
+                        >
+
+                    </div>
+
+
+                    <div class="grupo">
+
+                        <label>
+                            Piso / Dpto
+                        </label>
+
+                        <input
+                            type="text"
+                            name="piso"
+                            placeholder="Opcional"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- REFERENCIA -->
+                <div class="grupo">
+
+                    <label>
+                        Referencia
+                    </label>
+
+                    <input
+                        type="text"
+                        name="referencia"
+                        placeholder="Ejemplo: Frente al parque"
+                    >
+
+                </div>
+
+
+                <!-- INFORMACIÓN DELIVERY -->
+                <div class="info-entrega">
+
+                    <span>
+                        🛵
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Delivery en Huancayo
+                        </strong>
+
+                        <p>
+                            Selecciona tu distrito y completa tu dirección
+                            para realizar la entrega.
+                        </p>
+
+                        <p id="texto-costo-delivery">
+                            💰 Selecciona tu distrito para conocer el costo.
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
-            <div class="grupo">
 
-                <label>
-                    Referencia
-                </label>
+            <!-- RECOJO EN TIENDA -->
+            <div id="seccion-recojo"
+                style="display: none;">
 
-                <input type="text"
-                name="referencia">
+
+                <div class="datos-tienda">
+
+
+                    <!-- UBICACIÓN -->
+                    <div>
+
+                        <strong>
+                            📍 Ubicación
+                        </strong>
+
+                        <p>
+                            Jr. Piura Nueva 154, Huancayo, Junín
+                        </p>
+
+                    </div>
+
+
+                    <!-- WHATSAPP -->
+                    <div>
+
+                        <strong>
+                            📲 Horario y disponibilidad
+                        </strong>
+
+                        <p>
+                            Consulta nuestro horario y disponibilidad por WhatsApp.
+                        </p>
+
+                        <a
+                            href="https://wa.me/51904434996"
+                            target="_blank"
+                            class="btn-whatsapp"
+                        >
+
+                            💬 Consultar por WhatsApp
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MAPA DE LA TIENDA -->
+                <div class="mapa-tienda">
+
+                    <div class="titulo-mapa">
+
+                        <h2>
+                            📍 Encuéntranos
+                        </h2>
+
+                        <p>
+                            Visítanos en nuestra tienda
+                        </p>
+
+                    </div>
+
+
+                    <div class="direccion-mapa">
+
+                        📍 Jr. Piura Nueva 154,
+                        Huancayo - Junín
+
+                    </div>
+
+
+                    <div class="contenedor-mapa">
+
+                        <iframe
+                            src="https://www.google.com/maps?q=Jr.+Piura+Nueva+154+Huancayo+Junin&output=embed"
+                            width="100%"
+                            height="350"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy">
+
+                        </iframe>
+
+                    </div>
+
+
+                    <a
+                        href="https://www.google.com/maps/search/?api=1&query=Jr.+Piura+Nueva+154+Huancayo+Junin"
+                        target="_blank"
+                        class="btn-ver-mapa"
+                    >
+
+                        🗺️ Abrir en Google Maps
+
+                    </a>
+
+                </div>
 
             </div>
 
+
+            <!-- BOTONES -->
             <div class="botones-envio">
 
-                <a href="{{ url_for('main.carrito') }}"
-                class="btn-seguir">
+                <a
+                    href="{{ url_for('main.carrito') }}"
+                    class="btn-seguir"
+                >
 
-                    ← Volver
+                    Volver ←
 
                 </a>
 
-                <button type="submit"
-                class="btn-continuar">
 
-                    🚚 Continuar compra
+                <button
+                    type="submit"
+                    class="btn-continuar"
+                    id="btn-continuar"
+                >
+
+                    🚚 Continuar con Delivery
 
                 </button>
 
@@ -195,5 +477,81 @@
 
 </section>
 
+
+<script>
+
+    function seleccionarDelivery() {
+
+        document.getElementById("tipo_entrega").value = "delivery";
+
+        document
+            .getElementById("seccion-delivery")
+            .style.display = "block";
+
+        document
+            .getElementById("seccion-recojo")
+            .style.display = "none";
+
+        document
+            .getElementById("opcion-delivery")
+            .classList.add("activa");
+
+        document
+            .getElementById("opcion-recojo")
+            .classList.remove("activa");
+
+        document
+            .getElementById("btn-continuar")
+            .innerHTML = "🚚 Continuar con Delivery";
+
+        document
+            .getElementById("distrito")
+            .required = true;
+
+        document
+            .getElementById("direccion")
+            .required = true;
+
+    }
+
+
+    function seleccionarRecojo() {
+
+        document.getElementById("tipo_entrega").value = "recojo_tienda";
+
+        document
+            .getElementById("seccion-delivery")
+            .style.display = "none";
+
+        document
+            .getElementById("seccion-recojo")
+            .style.display = "block";
+
+        document
+            .getElementById("opcion-recojo")
+            .classList.add("activa");
+
+        document
+            .getElementById("opcion-delivery")
+            .classList.remove("activa");
+
+        document
+            .getElementById("btn-continuar")
+            .innerHTML = "🏪 Continuar con Recojo";
+
+        document
+            .getElementById("distrito")
+            .required = false;
+
+        document
+            .getElementById("direccion")
+            .required = false;
+
+    }
+
+</script>
+```
+
 </body>
+
 </html>
