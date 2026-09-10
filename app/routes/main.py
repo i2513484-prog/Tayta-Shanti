@@ -695,115 +695,643 @@ def logout():
 
 @main_bp.route('/checkout')
 def checkout():
+    # Si Mercado Pago devuelve información del pago
     if request.args.get('payment_id') or request.args.get('collection_id'):
-        return redirect(url_for('main.pago_exitoso', **request.args))
 
+        return redirect(
+            url_for(
+                'main.pago_exitoso',
+                **request.args
+            )
+        )
+    # Verificar sesión
     if 'usuario_id' not in session:
-        session['next_url'] = url_for('main.checkout')
-        return redirect(url_for('main.login'))
 
+        session['next_url'] = url_for('main.checkout')
+
+        return redirect(
+            url_for('main.login')
+        )
+    # Obtener carrito
     carrito_session = session.get('carrito', {})
     productos_carrito = []
-    total = 0
-
+    subtotal = 0
+    # Si el carrito está vacío
     if not carrito_session:
-        return redirect(url_for('main.carrito'))
-
+        return redirect(
+            url_for('main.carrito')
+        )
+    # Recorrer productos
     for id_str, cantidad in carrito_session.items():
         producto = Producto.query.get(int(id_str))
         if producto:
+            cantidad = int(cantidad)
+            subtotal_producto = (
+                float(producto.precio) * cantidad
+            )
+            subtotal += subtotal_producto
+            productos_carrito.append({
+                'producto': producto,
+                'cantidad': cantidad,
+                'subtotal': subtotal_producto
+            })
+    # Obtener usuario
+    usuario = Usuario.query.get(
+        session['usuario_id']
+    )
+    # ==============================
+    # TIPO DE ENTREGA
+    # ==============================
+    tipo_entrega = session.get(
+        'tipo_entrega',
+        'recojo'
+    )
+    # ==============================
+    # COSTO DELIVERY
+    # ==============================
+    if tipo_entrega == 'delivery':
+        costo_delivery = float(
+            session.get(
+                'costo_delivery',
+                0
+            )
+        )
+    else:
+        costo_delivery = 0
+    # ==============================
+    # TOTAL FINAL
+    # ==============================
+    total_final = (
+        subtotal + costo_delivery
+    )
+    # ==============================
+    # MOSTRAR CHECKOUT
+    # ==============================
+    return render_template(
+        'checkout.html',
+        productos=productos_carrito,
+        subtotal=subtotal,
+        costo_delivery=costo_delivery,
+        total_final=total_final,
+        tipo_entrega=tipo_entrega,
+        # Se mantiene por compatibilidad
+        total=total_final,
+        usuario=usuario
+    )
+
+@main_bp.route('/procesar_compra', methods=['POST'])
+def procesar_compra():
+
+    # ==========================================
+    # 1. VERIFICAR USUARIO
+    # ==========================================
+
+    if 'usuario_id' not in session:
+        flash("Debes iniciar sesión para realizar la compra.")
+        return redirect(url_for('main.login'))
+
+
+    # ==========================================
+    # 2. OBTENER DATOS DEL CLIENTE
+    # ==========================================
+
+    datos = {
+        "nombre": request.form.get('nombre') or request.form.get('nombre_completo'),
+        "telefono": request.form.get('telefono'),
+        "direccion": request.form.get('direccion')
+    }
+
+
+    # ==========================================
+    # 3. VALIDAR CARRITO
+    # ==========================================
+
+    carrito_session = session.get('carrito', {})
+
+    if not carrito_session:
+        flash("Tu carrito está vacío.")
+        return redirect(url_for('main.carrito'))
+
+
+    # ==========================================
+    # 4. RECORRER PRODUCTOS Y CALCULAR TOTAL
+    # ==========================================
+
+    productos_carrito = []
+    total = 0
+
+    for id_str, cantidad in carrito_session.items():
+
+        producto = Producto.query.get(int(id_str))
+
+        if producto:
+
+            cantidad = int(cantidad)
+
             subtotal = producto.precio * cantidad
+
             total += subtotal
+
             productos_carrito.append({
                 'producto': producto,
                 'cantidad': cantidad,
                 'subtotal': subtotal
             })
 
-    usuario = Usuario.query.get(session['usuario_id'])
+
+    # ==========================================
+    # 5. VALIDAR TOTAL
+    # ==========================================
+
+    if not productos_carrito or total <= 0:
+        flash("No se encontraron productos válidos en el carrito.")
+        return redirect(url_for('main.carrito'))
+
+
+    # ==========================================
+    # 6. VALIDAR DOCUMENTO
+    # ==========================================
+
+    tipo_doc = request.form.get("tipo_doc")
+    numero_doc = request.form.get("numero_doc", "").strip()
+
+
+    if tipo_doc == "dni":
+
+        if not numero_doc.isdigit() or len(numero_doc) != 8:
+
+            flash("El DNI debe tener exactamente 8 dígitos.")
+            return redirect(url_for('main.checkout'))
+
+        tipo_comprobante = "BOLETA"
+
+
+    elif tipo_doc == "ruc":
+
+        if not numero_doc.isdigit() or len(numero_doc) != 11:
+
+            flash("El RUC debe tener exactamente 11 dígitos.")
+            return redirect(url_for('main.checkout'))
+
+        tipo_comprobante = "FACTURA"
+
+
+    else:
+
+        flash("Selecciona un tipo de documento válido.")
+        return redirect(url_for('main.checkout'))
+
+
+    # ==========================================
+    # 7. CREAR LA VENTA
+    # ==========================================
+
+    nueva_venta = Venta(
+
+        nombre=datos["nombre"],
+
+        nombre_completo=request.form.get("nombre_completo") or datos["nombre"],
+
+        telefono=datos["telefono"],
+
+        direccion=datos["direccion"],
+
+        total=total,
+
+        tipo_documento=tipo_doc,
+
+        numero_documento=numero_doc
+    )
+
+    db.session.add(nueva_venta)
+
+    db.session.commit()
+
+
+    # ==========================================
+    # 8. GUARDAR ENVÍO
+    # ==========================================
+
+    envio = session.get('envio')
+
+
+    if envio:
+
+        nuevo_envio = Envio(
+
+            venta_id=nueva_venta.id,
+
+            departamento=envio.get('departamento'),
+
+            provincia=envio.get('provincia'),
+
+            distrito=envio.get('distrito'),
+
+            direccion=envio.get('direccion'),
+
+            numero=envio.get('numero'),
+
+            piso=envio.get('piso'),
+
+            referencia=envio.get('referencia')
+        )
+
+        db.session.add(nuevo_envio)
+
+
+    # ==========================================
+    # 9. GUARDAR DETALLE DE VENTA
+    # ==========================================
+
+    for item in productos_carrito:
+
+        detalle = DetalleVenta(
+
+            venta_id=nueva_venta.id,
+
+            producto=item['producto'].nombre,
+
+            cantidad=item['cantidad'],
+
+            precio=item['producto'].precio
+        )
+
+        db.session.add(detalle)
+
+
+    # Guardar envío y detalles
+
+    db.session.commit()
+
+
+    # ==========================================
+    # 10. GENERAR PDF
+    # ==========================================
+
+    pdf_generado = generar_pdf(
+        nueva_venta,
+        nueva_venta.detalles
+    )
+
+
+    # ==========================================
+    # 11. LIMPIAR CARRITO
+    # ==========================================
+
+    session.pop('carrito', None)
+
+
+    # ==========================================
+    # 12. MOSTRAR CONFIRMACIÓN
+    # ==========================================
 
     return render_template(
-        'checkout.html',
+
+        'confirmacion.html',
+
         productos=productos_carrito,
+
         total=total,
-        usuario=usuario
+
+        mensaje="✅ Pedido confirmado",
+
+        nombre=datos["nombre"],
+
+        telefono=datos["telefono"],
+
+        direccion=datos["direccion"],
+
+        metodo_pago=request.form.get("metodo_pago"),
+
+        tipo_documento=tipo_doc,
+
+        numero_documento=numero_doc,
+
+        tipo_comprobante=tipo_comprobante,
+
+        pdf=pdf_generado
     )
 
 @main_bp.route('/crear_pago', methods=['POST'])
 def crear_pago():
 
+    # ==============================
+    # VALIDAR SESIÓN
+    # ==============================
+
     if 'usuario_id' not in session:
-        return redirect(url_for('main.login'))
+
+        return redirect(
+            url_for('main.login')
+        )
+
+    # ==============================
+    # OBTENER DATOS DEL FORMULARIO
+    # ==============================
+
+    tipo_doc = request.form.get(
+        'tipo_doc',
+        'dni'
+    )
+
+    numero_doc = request.form.get(
+        'numero_doc',
+        ''
+    ).strip()
+
+    nombre = request.form.get(
+        'nombre',
+        ''
+    ).strip()
+
+    telefono = request.form.get(
+        'telefono',
+        ''
+    ).strip()
+
+    # ==============================
+    # VALIDAR DNI
+    # ==============================
+
+    if tipo_doc == 'dni':
+
+        if not (
+            numero_doc.isdigit()
+            and len(numero_doc) == 8
+        ):
+
+            flash(
+                'El DNI debe tener exactamente 8 dígitos.'
+            )
+
+            return redirect(
+                url_for('main.checkout')
+            )
+
+    # ==============================
+    # VALIDAR RUC
+    # ==============================
+
+    elif tipo_doc == 'ruc':
+
+        if not (
+            numero_doc.isdigit()
+            and len(numero_doc) == 11
+        ):
+
+            flash(
+                'El RUC debe tener exactamente 11 dígitos.'
+            )
+
+            return redirect(
+                url_for('main.checkout')
+            )
+
+    # ==============================
+    # VALIDAR NOMBRE
+    # ==============================
+
+    if len(nombre) < 3:
+
+        flash(
+            'Ingresa un nombre o razón social válido.'
+        )
+
+        return redirect(
+            url_for('main.checkout')
+        )
+
+    # ==============================
+    # OBTENER CARRITO
+    # ==============================
+
+    carrito_session = session.get(
+        'carrito',
+        {}
+    )
+
+    if not carrito_session:
+
+        flash(
+            'Tu carrito está vacío.'
+        )
+
+        return redirect(
+            url_for('main.carrito')
+        )
+
+    # ==============================
+    # GUARDAR DATOS DEL CLIENTE
+    # ==============================
 
     session['datos_cliente'] = {
-        "nombre": request.form.get('nombre'),
-        "telefono": request.form.get('telefono'),
-        "direccion": request.form.get('direccion')
+
+        'tipo_doc': tipo_doc,
+
+        'numero_doc': numero_doc,
+
+        'nombre': nombre,
+
+        'telefono': telefono,
+
+        'metodo_pago': 'mercado'
     }
 
-    carrito_session = session.get('carrito', {})
+    # ==============================
+    # CREAR ITEMS MERCADO PAGO
+    # ==============================
+
     items = []
 
     for id_str, cantidad in carrito_session.items():
-        producto = Producto.query.get(int(id_str))
+
+        producto = Producto.query.get(
+            int(id_str)
+        )
 
         if producto:
+
             items.append({
-                "title": producto.nombre,
-                "quantity": int(cantidad),
-                "unit_price": float(producto.precio),
-                "currency_id": "PEN"
+
+                'title': producto.nombre,
+
+                'quantity': int(cantidad),
+
+                'unit_price': float(
+                    producto.precio
+                ),
+
+                'currency_id': 'PEN'
+
             })
 
+    # ==============================
+    # VALIDAR PRODUCTOS
+    # ==============================
+
+    if not items:
+
+        flash(
+            'No hay productos válidos para procesar.'
+        )
+
+        return redirect(
+            url_for('main.carrito')
+        )
+
+    # ==============================
+    # CREAR PREFERENCIA
+    # ==============================
+
     preference_data = {
-        "items": items,
-        "back_urls": {
-            "success": "http://127.0.0.1:5000/pago_exitoso",
-            "failure": "http://127.0.0.1:5000/pago_exitoso",
-            "pending": "http://127.0.0.1:5000/pago_exitoso"
+
+        'items': items,
+
+        'back_urls': {
+
+            'success':
+                'http://127.0.0.1:5000/pago_exitoso',
+
+            'failure':
+                'http://127.0.0.1:5000/pago_exitoso',
+
+            'pending':
+                'http://127.0.0.1:5000/pago_exitoso'
+
         }
+
     }
 
-    preference_response = sdk.preference().create(preference_data)
+    # ==============================
+    # ENVIAR A MERCADO PAGO
+    # ==============================
 
-    print("RESPUESTA:", preference_response)  # 👈 DEBUG
+    preference_response = (
+        sdk.preference().create(
+            preference_data
+        )
+    )
 
-    if preference_response["status"] != 201:
-        return f"Error Mercado Pago: {preference_response}"
+    print(
+        'RESPUESTA MERCADO PAGO:',
+        preference_response
+    )
 
-    preference = preference_response["response"]
+    # ==============================
+    # VALIDAR RESPUESTA
+    # ==============================
 
-    print("LINK:", preference.get("init_point"))  # 👈 DEBUG
+    if preference_response.get(
+        'status'
+    ) not in [200, 201]:
 
-    return redirect(preference["init_point"])
+        print(
+            'ERROR MERCADO PAGO:',
+            preference_response
+        )
+
+        flash(
+            'No se pudo iniciar el pago con Mercado Pago.'
+        )
+
+        return redirect(
+            url_for('main.checkout')
+        )
+
+    preference = preference_response.get(
+        'response',
+        {}
+    )
+
+    init_point = preference.get(
+        'init_point'
+    )
+
+    if not init_point:
+
+        flash(
+            'Mercado Pago no devolvió un enlace de pago.'
+        )
+
+        return redirect(
+            url_for('main.checkout')
+        )
+
+    # ==============================
+    # REDIRIGIR A MERCADO PAGO
+    # ==============================
+
+    return redirect(init_point)
+
 
 @main_bp.route('/pago_exitoso')
 def pago_exitoso():
-    datos = session.get('datos_cliente', {})
-    carrito_session = session.get('carrito', {})
+
+    datos = session.get(
+        'datos_cliente',
+        {}
+    )
+
+    carrito_session = session.get(
+        'carrito',
+        {}
+    )
+
     productos_carrito = []
+
     total = 0
 
     for id_str, cantidad in carrito_session.items():
-        producto = Producto.query.get(int(id_str))
+
+        producto = Producto.query.get(
+            int(id_str)
+        )
+
         if producto:
-            subtotal = producto.precio * cantidad
+
+            cantidad = int(cantidad)
+
+            subtotal = (
+                float(producto.precio)
+                * cantidad
+            )
+
             total += subtotal
+
             productos_carrito.append({
+
                 'producto': producto,
+
                 'cantidad': cantidad,
+
                 'subtotal': subtotal
+
             })
 
-    session.pop('carrito', None)
+    # Vaciar carrito después de mostrar
+    # la compra confirmada
+    session.pop(
+        'carrito',
+        None
+    )
+
     return render_template(
+
         'confirmacion.html',
+
         productos=productos_carrito,
+
         total=total,
-        mensaje="✅ Compra realizada con éxito",
-        nombre=datos.get("nombre"),
-        telefono=datos.get("telefono"),
-        direccion=datos.get("direccion")
+
+        mensaje='✅ Compra realizada con éxito',
+
+        nombre=datos.get('nombre'),
+
+        telefono=datos.get('telefono'),
+
+        direccion=datos.get(
+            'direccion'
+        )
     )
 
 @main_bp.route('/editar_producto/<int:id>', methods=['GET', 'POST'])
@@ -834,165 +1362,6 @@ def editar_producto(id):
 
     return render_template('admin/editar_producto.html', producto=producto)
 
-@main_bp.route('/procesar_compra', methods=['POST'])
-def procesar_compra():
-
-    # 🔹 1. DATOS DEL CLIENTE
-    datos = {
-        "nombre": request.form.get('nombre'),
-        "telefono": request.form.get('telefono'),
-        "direccion": request.form.get('direccion')
-    }
-
-    # 🔹 2. CARRITO
-    carrito_session = session.get('carrito', {})
-    productos_carrito = []
-    total = 0
-
-    # 🔹 3. RECORRER PRODUCTOS
-    for id_str, cantidad in carrito_session.items():
-        producto = Producto.query.get(int(id_str))
-
-        if producto:
-            subtotal = producto.precio * cantidad
-            total += subtotal
-            if total == 0:
-                return redirect(url_for('main.carrito'))
-
-            productos_carrito.append({
-                'producto': producto,
-                'cantidad': cantidad,
-                'subtotal': subtotal
-            })
-
-    # 🔹 4. GUARDAR VENTA
-    tipo_doc = request.form.get("tipo_doc")
-    numero_doc = request.form.get("numero_doc")
-
-    if tipo_doc == "ruc" and len(numero_doc) != 11:
-        flash("El RUC debe tener 11 dígitos")
-        return redirect(url_for('main.checkout'))
-
-    if tipo_doc == "dni" and len(numero_doc) != 8:
-        flash("El DNI debe tener 8 dígitos")
-        return redirect(url_for('main.checkout'))
-    
-    if tipo_doc == "dni":
-        tipo_comprobante = "BOLETA"
-    else:
-        tipo_comprobante = "FACTURA"
-
-    nueva_venta = Venta(
-        nombre = request.form.get("nombre_completo") or request.form.get("nombre"),
-        nombre_completo=request.form.get("nombre_completo"),
-        telefono=request.form.get("telefono"),
-        direccion=request.form.get("direccion"),
-        total=total,
-        tipo_documento=tipo_doc,
-        numero_documento=numero_doc
-    )
-    db.session.add(nueva_venta)
-    db.session.commit()
-
-    
-
-    # ===== GUARDAR ENVIO =====
-
-    envio = session.get('envio')
-
-    if envio:
-
-        nuevo_envio = Envio(
-
-            venta_id=nueva_venta.id,
-
-            departamento=envio.get(
-                'departamento'
-            ),
-
-            provincia=envio.get(
-                'provincia'
-            ),
-
-            distrito=envio.get(
-                'distrito'
-            ),
-
-            direccion=envio.get(
-                'direccion'
-            ),
-
-            numero=envio.get(
-                'numero'
-            ),
-
-            piso=envio.get(
-                'piso'
-            ),
-
-            referencia=envio.get(
-                'referencia'
-            )
-
-        )
-
-        db.session.add(nuevo_envio)
-
-    db.session.commit()
-
-    # 🔹 5. GUARDAR DETALLE DE PRODUCTOS
-    for item in productos_carrito:
-        detalle = DetalleVenta(
-            venta_id=nueva_venta.id,
-            producto=item['producto'].nombre,
-            cantidad=item['cantidad'],
-            precio=item['producto'].precio
-        )
-        db.session.add(detalle)
-
-    db.session.commit()
-
-    # ===== GENERAR PDF =====
-
-    pdf_generado = generar_pdf(
-    
-    nueva_venta,
-
-    nueva_venta.detalles
-
-    )
-
-    # 🔹 6. LIMPIAR CARRITO
-    session.pop('carrito', None)
-
-    # 🔹 7. MOSTRAR VOUCHER
-    return render_template(
-
-    'confirmacion.html',
-
-    productos=productos_carrito,
-
-    total=total,
-
-    mensaje="✅ Pedido confirmado",
-
-    nombre=datos["nombre"],
-
-    telefono=datos["telefono"],
-
-    direccion=datos["direccion"],
-
-    metodo_pago=request.form.get("metodo_pago"),
-
-    tipo_documento=tipo_doc,
-
-    numero_documento=numero_doc,
-
-    tipo_comprobante=tipo_comprobante,
-
-    pdf=pdf_generado
-
-)
     
 @main_bp.route("/buscar")
 def buscar():
