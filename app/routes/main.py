@@ -828,18 +828,6 @@ def procesar_compra():
 
             cantidad = int(cantidad)
 
-            # Validar cantidad
-            if cantidad <= 0:
-                continue
-
-            # Validar stock disponible
-            if producto.stock < cantidad:
-                flash(
-                    f"No hay suficiente stock para el producto: "
-                    f"{producto.nombre}. Stock disponible: {producto.stock}"
-                )
-                return redirect(url_for('main.carrito'))
-
             subtotal = producto.precio * cantidad
 
             total += subtotal
@@ -866,6 +854,7 @@ def procesar_compra():
 
     tipo_doc = request.form.get("tipo_doc")
     numero_doc = request.form.get("numero_doc", "").strip()
+
 
     if tipo_doc == "dni":
 
@@ -894,39 +883,7 @@ def procesar_compra():
 
 
     # ==========================================
-    # 7. VALIDAR MÉTODO DE PAGO
-    # ==========================================
-
-    metodo_pago = request.form.get("metodo_pago")
-
-    if not metodo_pago:
-
-        flash("Debes seleccionar un método de pago.")
-        return redirect(url_for('main.checkout'))
-
-
-    # Convertir a minúsculas para validar
-    metodo_pago = metodo_pago.strip().lower()
-
-
-    # Métodos de pago permitidos
-    metodos_validos = [
-        "yape",
-        "plin",
-        "tarjeta",
-        "efectivo"
-    ]
-
-
-    # Verificar que el método sea válido
-    if metodo_pago not in metodos_validos:
-
-        flash("El método de pago seleccionado no es válido.")
-        return redirect(url_for('main.checkout'))
-
-
-    # ==========================================
-    # 8. CREAR LA VENTA
+    # 7. CREAR LA VENTA
     # ==========================================
 
     nueva_venta = Venta(
@@ -946,14 +903,13 @@ def procesar_compra():
         numero_documento=numero_doc
     )
 
-
     db.session.add(nueva_venta)
 
     db.session.commit()
 
 
     # ==========================================
-    # 9. GUARDAR ENVÍO
+    # 8. GUARDAR ENVÍO
     # ==========================================
 
     envio = session.get('envio')
@@ -984,7 +940,7 @@ def procesar_compra():
 
 
     # ==========================================
-    # 10. GUARDAR DETALLE DE VENTA
+    # 9. GUARDAR DETALLE DE VENTA
     # ==========================================
 
     for item in productos_carrito:
@@ -1003,22 +959,13 @@ def procesar_compra():
         db.session.add(detalle)
 
 
-        # ======================================
-        # ACTUALIZAR STOCK
-        # ======================================
-
-        item['producto'].stock -= item['cantidad']
-
-
-    # ==========================================
-    # 11. GUARDAR CAMBIOS
-    # ==========================================
+    # Guardar envío y detalles
 
     db.session.commit()
 
 
     # ==========================================
-    # 12. GENERAR PDF
+    # 10. GENERAR PDF
     # ==========================================
 
     pdf_generado = generar_pdf(
@@ -1028,14 +975,14 @@ def procesar_compra():
 
 
     # ==========================================
-    # 13. LIMPIAR CARRITO
+    # 11. LIMPIAR CARRITO
     # ==========================================
 
     session.pop('carrito', None)
 
 
     # ==========================================
-    # 14. MOSTRAR CONFIRMACIÓN
+    # 12. MOSTRAR CONFIRMACIÓN
     # ==========================================
 
     return render_template(
@@ -1046,7 +993,7 @@ def procesar_compra():
 
         total=total,
 
-        mensaje="Pedido confirmado correctamente.",
+        mensaje="✅ Pedido confirmado",
 
         nombre=datos["nombre"],
 
@@ -1054,7 +1001,7 @@ def procesar_compra():
 
         direccion=datos["direccion"],
 
-        metodo_pago=metodo_pago,
+        metodo_pago=request.form.get("metodo_pago"),
 
         tipo_documento=tipo_doc,
 
