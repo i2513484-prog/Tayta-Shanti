@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Dashboard Admin
+    </title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilosadmin.css') }}">
+
+</head>
+
+<body>
+
+    <div class="admin-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="logo">
+                👑 ADMIN
+            </div>
+
+            <ul class="menu">
+
+                <li>
+                    <a href="{{ url_for('admin.dashboard') }}" class="active">
+
+                        📊 Dashboard
+
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('admin.productos') }}">
+
+                        📦 Productos
+
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('admin.ventas') }}">
+
+                        🛒 Ventas
+
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <!-- CONTENIDO -->
+        <main class="main-content">
+
+            <!-- TOPBAR -->
+            <div class="topbar">
+
+                <div>
+
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                    <p>
+                        Resumen general de tu tienda
+                    </p>
+
+                </div>
+
+                <div class="admin-user">
+
+                    👤 Administrador
+
+                </div>
+
+            </div>
+
+            <!-- CARDS -->
+            <div class="cards">
+
+                <!-- PRODUCTOS -->
+                <div class="card-dashboard">
+
+                    <div class="card-icon">
+                        📦
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Total Productos
+                        </h3>
+
+                        <h2>
+                            {{ total_productos }}
+                        </h2>
+
+                    </div>
+
+                </div>
+                <!-- INGRESOS -->
+                <div class="card-dashboard">
+
+                    <div class="card-icon">
+                        💰
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Ingresos
+                        </h3>
+
+                        <h2>
+                            S/ {{ ingresos_totales }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <!-- PENDIENTES -->
+                <div class="card-dashboard">
+
+                    <div class="card-icon">
+                        📦
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Pendientes
+                        </h3>
+
+                        <h2>
+                            {{ pedidos_pendientes }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <!-- VENTAS -->
+                <div class="card-dashboard">
+
+                    <div class="card-icon">
+                        🛒
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Ventas
+                        </h3>
+
+                        <h2>
+                            {{ total_ventas }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <!-- USUARIOS -->
+                <div class="card-dashboard">
+
+                    <div class="card-icon">
+                        👥
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Usuarios
+                        </h3>
+
+                        <h2>
+                            {{ total_usuarios }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BOTON -->
+            <a href="{{ url_for('admin.productos') }}" class="btn-admin">
+
+                📦 Ver productos
+
+            </a>
+            <!-- GRAFICO -->
+            <div class="grafico-box">
+
+                <h2>
+                    📈 Ventas por día
+                </h2>
+
+                <canvas id="ventasChart"></canvas>
+
+            </div>
+
+            <!-- TABLA -->
+            <div class="tabla-box">
+
+                <h2 class="titulo-tabla">
+
+                    🛍 Últimas ventas
+
+                </h2>
+
+                <table class="tabla-admin">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Cliente
+                            </th>
+
+                            <th>
+                                Producto
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Fecha
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for venta in ultimas_ventas %}
+
+                        <tr>
+
+                            <!-- CLIENTE -->
+                            <td>
+
+                                {% if venta.nombre_completo
+                                and venta.nombre_completo != 'undefined undefined' %}
+
+                                {{ venta.nombre_completo }}
+
+                                {% elif venta.nombre
+                                and venta.nombre != 'undefined' %}
+
+                                {{ venta.nombre }}
+
+                                {% else %}
+
+                                Usuario no registrado
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- PRODUCTO -->
+                            <td>
+
+                                {% set detalles = venta.detalles %}
+
+                                {% if detalles %}
+
+                                {{ detalles[0].producto }}
+
+                                {% else %}
+
+                                Sin producto
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- TOTAL -->
+                            <td>
+
+                                S/ {{ venta.total }}
+
+                            </td>
+
+                            <!-- ESTADO -->
+                            <td>
+
+                                <form action="{{ url_for('admin.cambiar_estado', id=venta.id) }}" method="POST">
+
+                                    <select name="estado" onchange="this.form.submit()" class="estado-select">
+
+                                        <option value="Pendiente" {% if venta.estado=='Pendiente' %} selected {% endif
+                                            %}>
+
+                                            Pendiente
+
+                                        </option>
+
+                                        <option value="Preparando" {% if venta.estado=='Preparando' %} selected {% endif
+                                            %}>
+
+                                            Preparando
+
+                                        </option>
+
+                                        <option value="En camino" {% if venta.estado=='En camino' %} selected {% endif
+                                            %}>
+
+                                            En camino
+
+                                        </option>
+
+                                        <option value="Entregado" {% if venta.estado=='Entregado' %} selected {% endif
+                                            %}>
+
+                                            Entregado
+
+                                        </option>
+
+                                    </select>
+
+                                </form>
+
+                            </td>
+
+                            <!-- FECHA -->
+                            <td>
+
+                                {{ venta.fecha.strftime('%d/%m/%Y') }}
+
+                            </td>
+                            {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        const ctx = document.getElementById('ventasChart');
+
+        new Chart(ctx, {
+
+            type: 'line',
+
+            data: {
+
+                labels: [
+
+                    'Lun',
+                    'Mar',
+                    'Mié',
+                    'Jue',
+                    'Vie',
+                    'Sáb',
+                    'Dom'
+
+                ],
+
+                datasets: [{
+
+                    label: 'Ventas',
+
+                    data: [12, 19, 8, 15, 22, 30, 18],
+
+                    borderColor: '#d4af37',
+
+                    backgroundColor: 'rgba(212,175,55,0.1)',
+
+                    tension: 0.4,
+
+                    fill: true
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+
+                        labels: {
+
+                            color: 'white'
+
+                        }
+
+                    }
+
+                },
+
+                scales: {
+
+                    x: {
+
+                        ticks: {
+
+                            color: 'white'
+
+                        }
+
+                    },
+
+                    y: {
+
+                        ticks: {
+
+                            color: 'white'
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

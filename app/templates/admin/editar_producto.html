@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Producto</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+
+<body class="body-producto">
+
+<div class="form-producto">
+
+    <h1>✏️ Editar Producto</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+            >
+
+        <input type="text" name="nombre" value="{{ producto.nombre }}" required>
+
+        <input type="number" step="0.01" name="precio" value="{{ producto.precio }}" required>
+            <input
+            type="number"
+            name="stock"
+            value="{{ producto.stock }}"
+            placeholder="Stock"
+            required>
+        
+        <!-- 🔥 IMAGEN ACTUAL -->
+        <img src="{{ url_for('static', filename='img/' + producto.imagen) }}"
+             style="width:100%; margin-bottom:15px; border-radius:10px;">
+
+        <!-- 🔄 CAMBIAR IMAGEN -->
+        <input type="file" name="imagen" accept="image/*" onchange="previewImagen(event)">
+
+        <!-- 👀 PREVIEW -->
+        <img id="preview" style="width:100%; margin-bottom:15px; display:none; border-radius:10px;">
+
+        <input type="text" name="descripcion" value="{{ producto.descripcion }}">
+
+        <!-- 🔽 CATEGORÍA -->
+        <select name="categoria" required>
+            <option value="ron" {% if producto.categoria == 'ron' %}selected{% endif %}>Ron</option>
+            <option value="whisky" {% if producto.categoria == 'whisky' %}selected{% endif %}>Whisky</option>
+            <option value="vino" {% if producto.categoria == 'vino' %}selected{% endif %}>Vino</option>
+            <option value="tequila" {% if producto.categoria == 'tequila' %}selected{% endif %}>Tequila</option>
+            <option value="vodka" {% if producto.categoria == 'vodka' %}selected{% endif %}>Vodka</option>
+            <option value="otros" {% if producto.categoria == 'otros' %}selected{% endif %}>Otros</option>
+        </select>
+
+        <button type="submit">Actualizar</button>
+
+    </form>
+
+</div>
+
+<script>
+function previewImagen(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('preview');
+
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Ventas
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+
+</head>
+
+<body>
+
+    <h2>
+        📊 Ventas registradas
+    </h2>
+
+    <!-- BUSCADOR -->
+    <input type="text" id="buscador" placeholder="Buscar cliente..." class="input-busqueda">
+
+    <!-- TABLA -->
+    <table class="tabla-ventas">
+
+        <thead>
+
+            <tr>
+
+                <th>Cliente</th>
+                <th>Documento</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="tablaBody">
+
+            {% for item in data %}
+
+            <tr>
+
+                <!-- CLIENTE -->
+                <td>
+
+                    {% if item.venta.nombre_completo
+                    and item.venta.nombre_completo != 'undefined undefined' %}
+
+                    {{ item.venta.nombre_completo }}
+
+                    {% elif item.venta.nombre
+                    and item.venta.nombre != 'undefined' %}
+
+                    {{ item.venta.nombre }}
+
+                    {% else %}
+
+                    Usuario no registrado
+
+                    {% endif %}
+
+                </td>
+
+                <!-- DOCUMENTO -->
+                <td>
+
+                    {% if item.venta.tipo_documento %}
+
+                    {{ item.venta.tipo_documento | upper }}
+                    -
+                    {{ item.venta.numero_documento }}
+
+                    {% else %}
+
+                    SIN DOCUMENTO
+
+                    {% endif %}
+
+                </td>
+
+                <!-- TOTAL -->
+                <td>
+
+                    S/ {{ item.venta.total }}
+
+                </td>
+
+                <!-- FECHA -->
+                <td>
+
+                    {{ item.venta.fecha.strftime('%d/%m/%Y') }}
+
+                </td>
+
+                <!-- ACCIONES -->
+                <td>
+
+                    <a href="{{ url_for('admin.eliminar_venta', id=item.venta.id) }}"
+                        onclick="return confirm('¿Eliminar esta venta?')" class="btn-eliminar">
+
+                        🗑
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="pagination">
+
+        {% if ventas.has_prev %}
+
+        <a href="{{ url_for('admin.ventas', page=ventas.prev_num) }}">
+
+            ← Anterior
+
+        </a>
+
+        {% endif %}
+
+        {% for page_num in ventas.iter_pages() %}
+
+        {% if page_num %}
+
+        <a href="{{ url_for('admin.ventas', page=page_num) }}" class="
+            {% if ventas.page == page_num %}
+            active-page
+            {% endif %}
+            ">
+
+            {{ page_num }}
+
+        </a>
+
+        {% endif %}
+
+        {% endfor %}
+
+        {% if ventas.has_next %}
+
+        <a href="{{ url_for('admin.ventas', page=ventas.next_num) }}">
+
+            Siguiente →
+
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>

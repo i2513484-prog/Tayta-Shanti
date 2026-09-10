@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Productos Admin</title>
+
+    <!-- GOOGLE FONT -->
+    <link rel="preconnect"
+    href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+    <!-- ICONOS -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
+    rel='stylesheet'>
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+    href="{{ url_for('static',
+    filename='estilosadmin.css') }}">
+
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            👑 ADMIN
+        </div>
+
+        <ul class="menu">
+
+            <li>
+
+                <a href="{{ url_for('admin.dashboard') }}">
+
+                    <i class='bx bxs-dashboard'></i>
+                    Dashboard
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{{ url_for('admin.productos') }}"
+                class="active">
+
+                    <i class='bx bxs-package'></i>
+                    Productos
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{{ url_for('admin.ventas') }}">
+
+                    <i class='bx bxs-cart'></i>
+                    Ventas
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- TOP -->
+        <div class="productos-top">
+
+            <h1>
+                Gestión de Productos
+            </h1>
+
+            <a href="{{ url_for('admin.crear_producto') }}"
+            class="btn-admin">
+
+                <i class='bx bx-plus'></i>
+                Nuevo producto
+
+            </a>
+
+        </div>
+
+        <!-- TABLA -->
+        <div class="tabla-box">
+
+            <table class="tabla-productos">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Categoría</th>
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for producto in productos %}
+
+                    <tr>
+
+                        <td>
+                            {{ producto.id }}
+                        </td>
+
+                        <td>
+
+                            <img
+                            src="{{ url_for('static',
+                            filename='img/' + producto.imagen) }}"
+
+                            class="producto-img">
+
+                        </td>
+
+                        <td>
+                            {{ producto.nombre }}
+                        </td>
+
+                        <td class="precio-admin">
+
+                            S/ {{ producto.precio }}
+
+                        </td>
+
+                        <td>
+
+                            {{ producto.categoria }}
+
+                        </td>
+
+                        <td class="acciones">
+
+                            <a href="{{ url_for(
+                            'admin.editar_producto',
+                            id=producto.id) }}"
+
+                            class="btn-editar">
+
+                                <i class='bx bxs-edit'></i>
+                                Editar
+
+                            </a>
+
+                            <a href="{{ url_for(
+                            'admin.eliminar_producto',
+                            id=producto.id) }}"
+
+                            class="btn-eliminar">
+
+                                <i class='bx bxs-trash'></i>
+                                Eliminar
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

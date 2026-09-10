@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Envíos
+    </title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static',
+    filename='estilos.css') }}">
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <a href="{{ url_for('main.carrito') }}">
+        🚚 Envíos
+    </a>
+
+    <h1>
+        🍃 LICORERÍA TAYTA SHANTI 🍃
+    </h1>
+
+    <a href="{{ url_for('main.home') }}">
+        🏠 Inicio
+    </a>
+
+</nav>
+
+<!-- CONTENIDO -->
+
+<section class="contenedor-carrito">
+
+    <!-- PANEL -->
+
+    <div class="panel-envio">
+
+        <h1 class="titulo-carrito">
+            🚚 Datos de envío
+        </h1>
+
+        <p class="subtitulo-carrito">
+            Ingresa tu dirección para continuar la compra
+        </p>
+
+        <form method="POST">
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+                >
+
+            <div class="fila">
+
+                <div class="grupo">
+
+                    <label>
+                        Departamento
+                    </label>
+
+                    <input type="text"
+                    value="Junín"
+                    readonly>
+
+                </div>
+
+                <div class="grupo">
+
+                    <label>
+                        Provincia
+                    </label>
+
+                    <input type="text"
+                    value="Huancayo"
+                    readonly>
+
+                </div>
+
+            </div>
+
+            <div class="grupo">
+
+                <label>
+                    Distrito
+                </label>
+
+                <select name="distrito" required>
+
+                    <option value="">
+                        Seleccionar
+                    </option>
+
+                    <option value="Huancayo">
+                        Huancayo
+                    </option>
+
+                    <option value="El Tambo">
+                        El Tambo
+                    </option>
+
+                    <option value="Chilca">
+                        Chilca
+                    </option>
+
+                    <option value="Pilcomayo">
+                        Pilcomayo
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="grupo">
+
+                <label>
+                    Dirección
+                </label>
+
+                <input type="text"
+                name="direccion"
+                placeholder="Av / Calle / Jr"
+                required>
+
+            </div>
+
+            <div class="fila">
+
+                <div class="grupo">
+
+                    <label>
+                        Número
+                    </label>
+
+                    <input type="text"
+                    name="numero">
+
+                </div>
+
+                <div class="grupo">
+
+                    <label>
+                        Piso / Dpto
+                    </label>
+
+                    <input type="text"
+                    name="piso">
+
+                </div>
+
+            </div>
+
+            <div class="grupo">
+
+                <label>
+                    Referencia
+                </label>
+
+                <input type="text"
+                name="referencia">
+
+            </div>
+
+            <div class="botones-envio">
+
+                <a href="{{ url_for('main.carrito') }}"
+                class="btn-seguir">
+
+                    ← Volver
+
+                </a>
+
+                <button type="submit"
+                class="btn-continuar">
+
+                    🚚 Continuar compra
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+</body>
+</html>
