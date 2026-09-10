@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        Compra confirmada
+
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static',
+    filename='estilos.css') }}">
+
+</head>
+
+<body>
+
+    <div class="header">
+
+        <div class="header-left">
+
+            ✅ Pedido confirmado
+
+        </div>
+
+        <div class="header-center">
+
+            🍃LICORERÍA TAYTA SHANTI🍃
+
+        </div>
+
+        <div class="header-right">
+
+            <a href="{{ url_for('main.home') }}" class="icono-carrito">
+
+                🏠
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="success-container">
+
+        <div class="success-card">
+
+            <div class="success-icon">
+
+                ✅
+
+            </div>
+
+            <h1>
+
+                Compra realizada
+
+            </h1>
+
+            <p class="success-text">
+
+                Gracias por tu compra 🍃
+
+            </p>
+
+            <!-- DATOS -->
+
+            <div class="cliente-box">
+
+                <div class="info-item">
+
+                    <span>
+
+                        Cliente
+
+                    </span>
+
+                    <strong>
+
+                        {{ nombre }}
+
+                    </strong>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span>
+
+                        Documento
+
+                    </span>
+
+                    <strong>
+
+                        {{ tipo_documento | upper }}
+                        -
+                        {{ numero_documento }}
+
+                    </strong>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span>
+
+                        Teléfono
+
+                    </span>
+
+                    <strong>
+
+                        {{ telefono }}
+
+                    </strong>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span>
+
+                        Método de pago
+
+                    </span>
+
+                    <strong>
+
+                        {{ metodo_pago }}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <!-- PRODUCTOS -->
+
+            <div class="productos-box">
+
+                {% for item in productos %}
+
+                <div class="producto-item">
+
+                    <div class="producto-info">
+
+                        <h3>
+
+                            {{ item.producto.nombre }}
+
+                        </h3>
+
+                        <p>
+
+                            Cantidad:
+                            {{ item.cantidad }}
+
+                        </p>
+
+                    </div>
+
+                    <div class="subtotal">
+
+                        S/ {{ item.subtotal }}
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- TOTAL -->
+
+            <div class="total-box">
+
+                TOTAL PAGADO
+
+                <span>
+
+                    S/ {{ total }}
+
+                </span>z
+
+            </div>
+
+            <!-- BOTON -->
+
+            <a href="{{ url_for('main.home') }}" class="btn-volver-tienda">
+
+                Volver a la tienda
+
+            </a>
+
+            <a href="{{ url_for('static',
+            filename='comprobantes/' + pdf) }}"
+            download
+            class="btn-volver-tienda">
+
+                📄 Descargar comprobante PDF
+
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

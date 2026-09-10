@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+
+<body>
+
+    <div class="header">
+        <div class="header-left">📝 Registro</div>
+        <div class="header-center">🍃LICORERÍA TAYTA SHANTI🍃</div>
+        <div class="header-right">
+            <a href="{{ url_for('main.home') }}" class="icono-carrito">🏠</a>
+        </div>
+    </div>
+
+    <h2 class="titulo">CREAR CUENTA</h2>
+
+    <div class="auth-box">
+        <form method="POST">
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+                >
+            
+
+            <!-- CORREO -->
+            <label>Correo electrónico</label>
+            <input type="email" name="correo" required>
+
+            <!-- NOMBRE Y APELLIDOS -->
+            <div class="fila">
+                <div>
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" required>
+                </div>
+
+                <div>
+                    <label>Apellidos</label>
+                    <input type="text" name="apellidos" required>
+                </div>
+            </div>
+
+            <!-- CONTRASEÑA -->
+            <label>Crear contraseña</label>
+            <div class="password-box">
+                <input type="password" name="password" id="password" required>
+                <span onclick="togglePassword()">👁</span>
+            </div>
+
+            <!-- USUARIO -->
+            <label>Crear Usuario</label>
+            <input type="text" name="usuario" placeholder="Ingresa tu usuario">
+            {% if error %}
+            <p class="error-text">{{ error }}</p>
+            {% endif %}
+
+            <button type="submit" class="btn-pagar">Registrarme</button>
+
+        </form>
+
+        <p style="margin-top: 15px;">
+            ¿Ya tienes cuenta?
+            <a href="{{ url_for('main.login') }}">Inicia sesión</a>
+        </p>
+    </div>
+
+    <script>
+        function togglePassword() {
+            let input = document.getElementById("password");
+            input.type = input.type === "password" ? "text" : "password";
+        }
+    </script>
+
+</body>
+
+</html>

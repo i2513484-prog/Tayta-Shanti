@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoritos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body style="background:#000; color:white;">
+
+<h1 style="text-align:center;">❤️ Mis Favoritos</h1>
+
+<div class="grid-productos">
+
+    {% for producto in favoritos %}
+    <div class="card">
+
+        <div class="producto-box">
+
+            <div class="img-producto">
+                <img src="{{ url_for('static', filename='img/' + producto.imagen) }}">
+            </div>
+
+            <div class="info-producto">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.categoria }}</p>
+                <span>S/ {{ producto.precio }}</span>
+            </div>
+
+        </div>
+
+    </div>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

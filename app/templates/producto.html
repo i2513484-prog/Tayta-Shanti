@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ producto.nombre }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">☰ Productos</div>
+
+        <div class="header-center">
+            🍃 LICORERÍA TAYTA SHANTI 🍃
+        </div>
+
+        <div class="header-right">
+            <a href="{{ url_for('main.carrito') }}" class="icono-carrito">
+                🛒
+            </a>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR GENERAL -->
+    <div class="producto-page">
+
+        <!-- BREADCRUMB -->
+        <div class="breadcrumb">
+            Inicio > Productos > {{ producto.nombre }}
+        </div>
+
+        <div class="detalle-pro">
+
+            <!-- IZQUIERDA -->
+            <div class="galeria-producto">
+
+                <div class="miniaturas">
+                    <img src="{{ url_for('static', filename='img/' + producto.imagen) }}">
+                    <img src="{{ url_for('static', filename='img/' + producto.imagen) }}">
+                    <img src="{{ url_for('static', filename='img/' + producto.imagen) }}">
+                </div>
+
+                <div class="imagen-principal">
+                    <img src="{{ url_for('static', filename='img/' + producto.imagen) }}" alt="{{ producto.nombre }}">
+                </div>
+
+            </div>
+
+            <!-- DERECHA -->
+            <div class="detalle-info">
+
+                <p class="marca">
+                    LICORERÍA TAYTA SHANTI
+                </p>
+
+                <h1 class="titulo-producto">
+                    {{ producto.nombre }}
+                </h1>
+
+                <div class="rating">
+                    ⭐⭐⭐⭐⭐ <span>(4.5 reseñas)</span>
+                </div>
+
+                <p class="precio-grande">
+                    S/ {{ producto.precio }}
+                </p>
+
+                <{% if producto.stock> 0 %}
+
+                    <div class="stock-disponible">
+
+                        ✔ Disponible:
+                        {{ producto.stock }}
+                        unidades
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="stock-agotado">
+
+                        ❌ Sin stock
+
+                    </div>
+
+                    {% endif %}
+
+                    <div class="descripcion">
+                        Producto original de alta calidad, ideal para consumo personal o regalo.
+                        Sabor único y exquisito.
+                    </div>
+
+                    <!-- BENEFICIOS -->
+                    <div class="beneficios">
+
+                        <div class="beneficio">
+                            <i>🛡️</i>
+                            <p>100% Original</p>
+                        </div>
+
+                        <div class="beneficio">
+                            <i>🚚</i>
+                            <p>Envíos rápidos</p>
+                        </div>
+
+                        <div class="beneficio">
+                            <i>⚙️</i>
+                            <p>Garantía de calidad</p>
+                        </div>
+
+                        <div class="beneficio">
+                            <i>🔒</i>
+                            <p>Pago seguro</p>
+                        </div>
+
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="acciones">
+
+                        <a href="{{ url_for('main.agregar_carrito', id=producto.id) }}" class="btn-carrito">
+                            🛒 Agregar al carrito
+                        </a>
+
+                        <a href="{{ url_for('main.home') }}" class="btn-volver">
+                            ← Volver a la tienda
+                        </a>
+
+                    </div>
+
+            </div>
+
+        </div>
+
+        <!-- SERVICIOS EXTRA ABAJO -->
+        <div class="servicios-extra">
+
+            <div class="servicio-item">
+                <div class="servicio-icono">🚚</div>
+                <div class="servicio-texto">
+                    <h4>Envíos a todo el Perú</h4>
+                    <p>Llegamos a tu puerta</p>
+                </div>
+            </div>
+
+            <div class="servicio-item">
+                <div class="servicio-icono">🛡️</div>
+                <div class="servicio-texto">
+                    <h4>Compra 100% segura</h4>
+                    <p>Tus datos protegidos</p>
+                </div>
+            </div>
+
+            <div class="servicio-item">
+                <div class="servicio-icono">🎧</div>
+                <div class="servicio-texto">
+                    <h4>Soporte 24/7</h4>
+                    <p>Estamos para ayudarte</p>
+                </div>
+            </div>
+
+            <div class="servicio-item">
+                <div class="servicio-icono">✅</div>
+                <div class="servicio-texto">
+                    <h4>Calidad garantizada</h4>
+                    <p>Productos originales</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

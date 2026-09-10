@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}" />
+</head>
+
+<body class="login-page">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">🔐 Login</div>
+
+        <div class="header-center">🍃LICORERÍA TAYTA SHANTI🍃</div>
+
+        <div class="header-right">
+            <a href="{{ url_for('main.home') }}" class="icono-carrito">🏠</a>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR LOGIN -->
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-icon">🍃</div>
+
+            <h2>INICIAR SESIÓN</h2>
+
+            <form method="POST">
+                <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+                >
+        
+                
+                <label for="identificador">👤 Correo o usuario</label>
+                <input type="text" id="identificador" name="identificador" placeholder="Correo o usuario" required />
+
+                <label for="password"> 🔒 Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Contraseña" required />
+
+                <button type="submit" class="btn-login">Entrar</button>
+
+                {% if error or tiempo_restante|default(0) > 0 %}
+
+                {% if error %}
+
+                <div class="error-text">
+
+                    <p>{{ error }}</p>
+
+                    {% if intentos_restantes|default(0) > 0 %}
+
+                    <p>
+                        Intentos restantes:
+                        {{ intentos_restantes|default(0) }}
+                    </p>
+
+                    {% endif %}
+
+                    {% if tiempo_restante|default(0) > 0 %}
+
+                    <p>
+                        Tiempo restante:
+                        <span id="contador">
+                            {{ tiempo_restante }}
+                        </span>
+                        segundos
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+                {% endif %}
+
+                <div class="login-footer">
+                    <p>¿No tienes cuenta?</p>
+                    <a href="{{ url_for('main.registro') }}"> Regístrate aquí </a>
+                </div>
+        </div>
+    </div>
+
+    <script>
+
+        let tiempo = Number("{{ tiempo_restante|default(0) }}");
+
+        const contador = document.getElementById("contador");
+
+        if (contador && tiempo > 0) {
+
+            const intervalo = setInterval(() => {
+
+                tiempo--;
+
+                contador.innerText = tiempo;
+
+                if (tiempo <= 0) {
+
+                    clearInterval(intervalo);
+
+                    window.location.reload();
+
+                }
+
+            }, 1000);
+
+        }
+
+    </script>
+
+</body>
+
+</html>

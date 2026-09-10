@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Crear Producto
+    </title>
+
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='estilosadmin.css') }}">
+
+</head>
+
+<body class="body-producto">
+
+    <div class="form-producto">
+
+        <h1>
+            ➕ Crear Producto
+        </h1>
+
+        <form
+        method="POST"
+        enctype="multipart/form-data">
+
+            <input
+            type="text"
+            name="nombre"
+            placeholder="Nombre"
+            required>
+
+            <input
+            type="number"
+            step="0.01"
+            name="precio"
+            placeholder="Precio"
+            required>
+
+            <input
+            type="number"
+            name="stock"
+            placeholder="Stock"
+            required>
+
+            <input
+            type="file"
+            name="imagen"
+            accept="image/*"
+            onchange="previewImagen(event)"
+            required>
+
+            <img
+            id="preview"
+            class="preview-img">
+
+            <input
+            type="text"
+            name="descripcion"
+            placeholder="Descripción">
+
+            <input
+            type="text"
+            name="categoria"
+            placeholder="Categoría">
+
+            <button type="submit">
+
+                Guardar Producto
+
+            </button>
+
+        </form>
+
+    </div>
+
+<script>
+
+function previewImagen(event){
+
+    const file = event.target.files[0];
+
+    const preview = document.getElementById(
+        'preview'
+    );
+
+    if(file){
+
+        preview.src = URL.createObjectURL(file);
+
+        preview.style.display = "block";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

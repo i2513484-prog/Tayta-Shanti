@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>
+        🍃Licorería Tayta Shanti🍃
+    </title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='estilos.css') }}">
+
+</head>
+
+<body>
+
+    <div class="header">
+
+        <!-- BUSCADOR -->
+
+        <div class="header-right">
+
+            <form action="{{ url_for('main.buscar') }}"
+            method="GET"
+            class="form-busqueda">
+
+                <span class="icono-busqueda"></span>
+
+                <input
+
+                    type="text"
+
+                    name="q"
+
+                    placeholder="¿Qué estás buscando?"
+
+                    value="{{ termino_busqueda if termino_busqueda else '' }}"
+
+                    class="input-busqueda"
+
+                >
+
+            </form>
+
+        </div>
+
+        <!-- LOGO -->
+
+        <div class="header-center">
+
+            🍃LICORERÍA TAYTA SHANTI🍃
+
+        </div>
+
+        <!-- USUARIO -->
+
+        <div class="header-right">
+
+            <span class="icono-header">
+                ✉️
+            </span>
+
+            {% if session.get('usuario_id') %}
+
+                <span class="usuario-logueado">
+
+                    Hola,
+                    {{ session.get('usuario_nombre') }}
+
+                </span>
+
+                <!-- ADMIN -->
+
+                {% if session.get('usuario_rol') == 'admin' %}
+
+                    <a href="{{ url_for('admin.dashboard') }}"
+                    class="link-header">
+
+                        📊 Dashboard
+
+                    </a>
+
+                {% endif %}
+
+                <!-- LOGOUT -->
+
+                <a href="{{ url_for('main.logout') }}"
+                class="link-header">
+
+                    Salir
+
+                </a>
+
+            {% else %}
+
+                <!-- LOGIN -->
+
+                <a href="{{ url_for('main.login') }}"
+                class="icono-carrito">
+
+                    👤
+
+                </a>
+
+            {% endif %}
+
+            <!-- CARRITO -->
+
+            <a href="{{ url_for('main.carrito') }}"
+            class="icono-carrito">
+
+                🛒
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- MENU -->
+
+    <div class="menu">
+
+        <a href="{{ url_for('main.home') }}">
+            INICIO
+        </a>
+
+        <a href="{{ url_for('main.categoria', categoria='ron') }}">
+            RON
+        </a>
+
+        <a href="{{ url_for('main.categoria', categoria='whisky') }}">
+            WHISKY
+        </a>
+
+        <a href="{{ url_for('main.categoria', categoria='vino') }}">
+            VINO
+        </a>
+
+        <a href="{{ url_for('main.categoria', categoria='tequila') }}">
+            TEQUILA
+        </a>
+
+        <a href="{{ url_for('main.categoria', categoria='vodka') }}">
+            VODKA
+        </a>
+
+        <a href="{{ url_for('main.categoria', categoria='otros') }}">
+            HOJA DE COCA
+        </a>
+
+    </div>
+
+    <!-- ALERTAS -->
+
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+            <div class="alerta-carrito"
+            id="alertaCarrito">
+
+                <div class="alerta-contenido">
+
+                    <span>
+
+                        ✔ {{ messages[0] }}
+
+                    </span>
+
+                    <a href="{{ url_for('main.carrito') }}"
+                    class="alerta-link">
+
+                        Ver carrito
+
+                    </a>
+
+                </div>
+
+                <button class="cerrar-alerta"
+                onclick="cerrarAlerta()">
+
+                    ✕
+
+                </button>
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+    <!-- BANNER -->
+
+    <div class="banner">
+
+        <div class="slide active banner1"></div>
+
+        <div class="slide banner2"></div>
+
+        <div class="slide banner3"></div>
+
+        <div class="overlay"></div>
+
+        <div class="contenido">
+
+            <span>
+                Nuevos
+            </span>
+
+            <h1>
+                LICORES
+            </h1>
+
+            <p>
+                Descubre nuestros nuevos ingresos
+            </p>
+
+            <button>
+                COMPRAR
+            </button>
+
+        </div>
+
+        <button class="prev"
+        onclick="cambiarSlide(-1)">
+
+            ❮
+
+        </button>
+
+        <button class="next"
+        onclick="cambiarSlide(1)">
+
+            ❯
+
+        </button>
+
+        <div class="dots">
+
+            <span onclick="irSlide(0)"
+            class="dot active"></span>
+
+            <span onclick="irSlide(1)"
+            class="dot"></span>
+
+            <span onclick="irSlide(2)"
+            class="dot"></span>
+
+        </div>
+
+    </div>
+
+    <!-- TITULO -->
+
+    <h2 class="titulo">
+
+        {% if categoria_actual %}
+
+            {{ categoria_actual|upper }}
+
+        {% else %}
+
+            PRODUCTOS
+
+        {% endif %}
+
+    </h2>
+
+    <!-- PRODUCTOS -->
+
+    <div class="contenedor">
+
+        {% for producto in productos %}
+
+        <div class="card">
+
+            <div class="producto-img-box">
+
+                <a href="{{ url_for('main.producto', id=producto.id) }}"
+                class="card-link">
+
+                    <img src="{{ url_for('static', filename='img/' + producto.imagen) }}"
+                    alt="{{ producto.nombre }}">
+
+                </a>
+
+                <a href="{{ url_for('main.agregar_carrito', id=producto.id) }}"
+                class="btn-hover-carrito">
+
+                    + Añadir
+
+                </a>
+
+            </div>
+
+            <div class="producto-info">
+
+                <a href="{{ url_for('main.producto', id=producto.id) }}"
+                class="card-link">
+
+                    <p class="nombre-producto">
+
+                        {{ producto.nombre }}
+
+                    </p>
+
+                    <p>
+
+                        <span class="precio">
+
+                            S/. {{ producto.precio }}
+
+                        </span>
+
+                        <span class="old">
+
+                            S/. {{ producto.precio + 20 }}
+
+                        </span>
+
+                    </p>
+
+                </a>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <p class="sin-productos">
+
+            No se encontraron productos
+
+            {% if termino_busqueda %}
+
+                para "{{ termino_busqueda }}"
+
+            {% endif %}
+
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+
+</html>

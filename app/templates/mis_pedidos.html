@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Mis pedidos
+    </title>
+
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='estilos.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <div class="contenedor-pedidos">
+
+        <h1>
+            📦 Mis pedidos
+        </h1>
+
+        {% for pedido in pedidos %}
+
+        <div class="pedido-card">
+
+            <div class="pedido-top">
+
+                <div>
+
+                    <h3>
+
+                        Pedido #{{ pedido.id }}
+
+                    </h3>
+
+                    <p>
+
+                        {{ pedido.fecha.strftime('%d/%m/%Y') }}
+
+                    </p>
+
+                </div>
+
+                <div class="pedido-total">
+
+                    S/ {{ pedido.total }}
+
+                </div>
+
+            </div>
+
+            <!-- ESTADO -->
+            <div class="pedido-estado">
+
+                {% if pedido.estado == 'Pendiente' %}
+
+                    🟡 Pendiente
+
+                {% elif pedido.estado == 'Preparando' %}
+
+                    🟠 Preparando
+
+                {% elif pedido.estado == 'En camino' %}
+
+                    🔵 En camino
+
+                {% elif pedido.estado == 'Entregado' %}
+
+                    🟢 Entregado
+
+                {% endif %}
+
+            </div>
+
+            <div class="tracking">
+
+    <div class="step
+    {% if pedido.estado in ['Pendiente','Preparando','En camino','Entregado'] %}
+    active
+    {% endif %}
+    ">
+
+        📦
+        <span>
+            Pedido recibido
+        </span>
+
+    </div>
+
+    <div class="line"></div>
+
+    <div class="step
+    {% if pedido.estado in ['Preparando','En camino','Entregado'] %}
+    active
+    {% endif %}
+    ">
+
+        👨‍🍳
+        <span>
+            Preparando
+        </span>
+
+    </div>
+
+    <div class="line"></div>
+
+    <div class="step
+    {% if pedido.estado in ['En camino','Entregado'] %}
+    active
+    {% endif %}
+    ">
+
+        🚚
+        <span>
+            En camino
+        </span>
+
+    </div>
+
+    <div class="line"></div>
+
+    <div class="step
+    {% if pedido.estado == 'Entregado' %}
+    active
+    {% endif %}
+    ">
+
+        ✅
+        <span>
+            Entregado
+        </span>
+
+    </div>
+
+</div>
+
+        </div>
+
+        {% else %}
+
+        <p>
+            No tienes pedidos todavía
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+</body>
+
+</html>

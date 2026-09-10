@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi carrito</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            🛒 Mi carrito
+        </div>
+
+        <div class="header-center">
+            🍃 LICORERÍA TAYTA SHANTI 🍃
+        </div>
+
+        <div class="header-right">
+            <a href="{{ url_for('main.home') }}" class="icono-carrito">
+                🏠 Inicio
+            </a>
+        </div>
+    </div>
+
+    {% if productos %}
+
+    <!-- TÍTULO -->
+    <div class="carrito-top">
+        <h1>Tu carrito de compras 🍃</h1>
+        <p>Revisa tus productos y continúa con tu compra</p>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="carrito-modern-layout">
+
+        <!-- IZQUIERDA -->
+        <div class="carrito-left">
+
+            {% for item in productos %}
+            <div class="producto-card-modern">
+
+                <div class="producto-img-modern">
+                    <img src="{{ url_for('static', filename='img/' + item.producto.imagen) }}"
+                        alt="{{ item.producto.nombre }}">
+                </div>
+
+                <div class="producto-info-modern">
+
+                    <h2>{{ item.producto.nombre }}</h2>
+
+                    <div class="badge-natural-modern">
+                        🍃 Producto natural
+                    </div>
+
+                    <div class="datos-modern">
+
+                        <div class="dato-modern">
+                            <p>Precio unitario</p>
+                            <strong>S/ {{ item.producto.precio }}</strong>
+                        </div>
+
+                        <div class="dato-modern">
+                            <p>Cantidad</p>
+
+                            <div class="cantidad-modern">
+                                <a href="{{ url_for('main.restar_carrito', id=item.producto.id) }}">−</a>
+                                <span>{{ item.cantidad }}</span>
+                                <a href="{{ url_for('main.sumar_carrito', id=item.producto.id) }}">+</a>
+                            </div>
+                        </div>
+
+                        <div class="dato-modern">
+                            <p>Subtotal</p>
+                            <strong class="subtotal-green">
+                                S/ {{ item.subtotal }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="producto-seguro">
+                        🛡 Producto 100% natural y de alta calidad
+                    </div>
+
+                </div>
+
+                <a href="{{ url_for('main.eliminar_carrito', id=item.producto.id) }}" class="btn-delete-modern">
+                    🗑
+                </a>
+
+            </div>
+            {% endfor %}
+
+            <!-- RECOMENDADOS (AQUÍ VA, CORRECTO) -->
+            <div class="recomendados">
+
+                <h3>✨ También te puede interesar</h3>
+
+                <div class="recomendados-grid">
+
+                    <div class="recomendado-item">
+                        <img src="{{ url_for('static', filename='img/coca.jpg') }}" alt="Hoja de coca">
+                        <h4>Hoja de coca</h4>
+                        <p>S/ 3.00</p>
+                        <button>+</button>
+                    </div>
+
+                    <div class="recomendado-item">
+                        <img src="{{ url_for('static', filename='img/vodka.png') }}" alt="Vodka Premium">
+                        <h4>Vodka Premium</h4>
+                        <p>S/ 50.00</p>
+                        <button>+</button>
+                    </div>
+
+                    <div class="recomendado-item">
+                        <img src="{{ url_for('static', filename='img/vino.jpg') }}" alt="Vino Tinto Reserva">
+                        <h4>Vino Tinto Reserva</h4>
+                        <p>S/ 45.00</p>
+                        <button>+</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DERECHA -->
+        <div class="resumen-modern">
+
+            <h2>📋 Resumen del pedido</h2>
+
+            <div class="resumen-line"></div>
+
+            <div class="fila-modern">
+                <span>Subtotal</span>
+                <strong>S/ {{ total }}</strong>
+            </div>
+
+            <div class="fila-modern">
+                <span>Envío</span>
+                <strong class="gratis">Gratis</strong>
+            </div>
+
+            <div class="resumen-line"></div>
+
+            <div class="fila-total-modern">
+                <span>TOTAL</span>
+                <strong>S/ {{ total }}</strong>
+            </div>
+
+            <div class="seguridad-box-modern">
+                <h4>Compra 100% segura</h4>
+                <p>Tus datos están protegidos con cifrado SSL</p>
+            </div>
+
+            <a href="{{ url_for('main.envios') }}"
+                class="btn-pagar-modern">
+
+                🚚 Continuar con envío
+
+            </a>
+
+            <div class="continuar-text">
+                o continúa comprando
+            </div>
+
+            <a href="{{ url_for('main.home') }}" class="btn-seguir-modern">
+                ← Seguir comprando
+            </a>
+
+            <a href="{{ url_for('main.vaciar_carrito') }}" class="btn-vaciar-modern">
+                🗑 Vaciar carrito
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- SERVICIOS -->
+    <div class="servicios-modern">
+
+        <div class="servicio-modern">
+            🚚
+            <div>
+                <h4>Envíos a todo el Perú</h4>
+                <p>Llegamos a tu puerta</p>
+            </div>
+        </div>
+
+        <div class="servicio-modern">
+            🛡
+            <div>
+                <h4>Compra 100% segura</h4>
+                <p>Tus datos protegidos</p>
+            </div>
+        </div>
+
+        <div class="servicio-modern">
+            🎧
+            <div>
+                <h4>Soporte 24/7</h4>
+                <p>Estamos para ayudarte</p>
+            </div>
+        </div>
+
+        <div class="servicio-modern">
+            ✅
+            <div>
+                <h4>Calidad garantizada</h4>
+                <p>Productos originales</p>
+            </div>
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <!-- CARRITO VACÍO -->
+    <div class="carrito-vacio">
+        <h2>Tu carrito está vacío</h2>
+
+        <a href="{{ url_for('main.home') }}" class="btn-seguir-modern">
+            Ir a comprar
+        </a>
+    </div>
+
+    {% endif %}
+
+</body>
+
+</html>

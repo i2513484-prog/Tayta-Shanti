@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Verificar correo
+    </title>
+
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='estilosadmin.css') }}"
+
+</head>
+
+<body class="body-verificar">
+
+<div class="verificar-box">
+
+    <h1>
+        🔐 Verificar correo
+    </h1>
+
+    <p class="texto-verificar">
+
+        Ingresa el código enviado a tu correo
+
+    </p>
+
+    <form method="POST">
+
+        <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+        >
+
+        <input
+        type="text"
+        name="codigo"
+        placeholder="Código de verificación"
+        required
+        >
+
+        <button type="submit">
+
+            Verificar código
+
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>
